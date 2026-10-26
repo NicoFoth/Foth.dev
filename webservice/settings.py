@@ -23,7 +23,7 @@ BASE_TEMPLATE = os.path.join(BASE_DIR, "templates")
 SECRET_KEY = os.getenv('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DJANGO_DEBUG') == '1'
 
 ALLOWED_HOSTS = ["foth.dev", "www.foth.dev", "localhost", "127.0.0.1", "176.9.90.101"]
 
@@ -43,9 +43,8 @@ INSTALLED_APPS = [
     'static_sites.apps.StaticSitesConfig',
     'poker.apps.PokerConfig',
     'projects.apps.ProjectsConfig',
-    'tailwind',
-    'theme',
-    'django_browser_reload',
+    'stars.apps.StarsConfig',
+    'puzzle.apps.PuzzleConfig',
 ]
 
 
@@ -57,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware'
+    'stars.middleware.StarsMiddleware',
 ]
 
 ROOT_URLCONF = 'webservice.urls'
@@ -73,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'stars.context_processors.site',
             ],
         },
     },
@@ -136,8 +136,11 @@ STATICFILES_DIRS = (
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-TAILWIND_APP_NAME = 'theme'
-
 LOGIN_REDIRECT_URL = "show_landing_page"
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+# Stars and puzzle progress live in the session. Signed cookies keep anonymous
+# visitors (and crawlers) from piling up rows in the sessions table.
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 365

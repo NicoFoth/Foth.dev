@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}404 Not Found - Foth.dev{% endblock %}
+{% block content %}
+<article>
+  <h2>--- 404: Off The Map ---</h2>
+  <p>You wander off the edge of the map. The path <code>{{ request.path }}</code> leads nowhere: no page, no project, not even a puzzle.</p>
+<pre class="dim">
+  $ cd {{ request.path|truncatechars:40 }}
+  bash: cd: {{ request.path|truncatechars:40 }}: <span class="white">No such file or directory</span>
+</pre>
+  <p>Getting lost is <em>still progress</em>, though. Someone left a star out here.</p>
+  <p><a href="{% url 'show_landing_page' %}">[Return to the front page]</a></p>
+</article>
+{% endblock %}

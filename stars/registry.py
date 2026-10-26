@@ -1,0 +1,46 @@
+"""Every star that can be found on the site.
+
+The order matters: star N lights up sky slot N in the landing page scene.
+"""
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Star:
+    key: str
+    title: str
+    hint: str
+
+
+STARS = [
+    Star('puzzle1', 'Cold Boot, part one', 'Solve the first half of Day 0.'),
+    Star('puzzle2', 'Cold Boot, part two', 'Then solve the other half.'),
+    Star('explorer', 'Tourist', 'Visit every page in the menu.'),
+    Star('lost', 'Off the map', 'Get lost.'),
+    Star('robots', 'Trespasser', 'Go where the robots are told not to.'),
+    Star('humans', 'Credits', 'Humans read the source.'),
+    Star('teapot', 'Short and stout', 'Ask the server for a coffee.'),
+    Star('curl', 'No browser required', 'Not everyone visits with a browser.'),
+    Star('sudo', 'Root access', 'Try to become root.'),
+    Star('konami', 'Cheat code', 'Some old cheat codes still work.'),
+    Star('moon', 'Moonstruck', 'Some things in the sky are clickable.'),
+    Star('owl', 'Night owl', 'Come back when you should be asleep.'),
+]
+
+BY_KEY = {star.key: star for star in STARS}
+
+# Stars that are discovered in the browser and reported back by site.js.
+CLIENT_CLAIMABLE = {'sudo', 'konami', 'moon', 'owl'}
+
+# url_name -> short label; visiting all of them earns the "explorer" star.
+MENU_PAGES = {
+    'show_landing_page': 'home',
+    'show_about_page': 'about',
+    'show_projects': 'projects',
+    'show_contact_page': 'contact',
+    'puzzle_day': 'puzzle',
+    'stars_page': 'stars',
+    'cs_overview': 'cs',
+    'show_poker_page': 'poker',
+    'show_legal_page': 'legal',
+}

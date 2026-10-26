@@ -1,39 +1,17 @@
 {% extends 'base.html' %}
-{% load static %}
-
+{% block title %}Poker - Foth.dev{% endblock %}
 {% block content %}
-<h1 class="text-3xl text-green-500">Poker Rankings</h1>
+<article>
+  <h2>--- Poker Rankings ---</h2>
+  <p>Chip balance across our home games, per season. Bragging rights only; no real money changes hands. Probably.</p>
+</article>
 {% for season, players in seasons_data.items %}
-<div class="w-fit border-2 border-green-700 p-2 text-green-700 text-center my-5 overflow-auto">
-  <h2 class="text-2xl text-green-700 text-center">{{ season }}</h2>
-  <p class="text-center">{{ season.start_date }} - {{ season.end_date }}</p>
-  <table class="text-center mx-auto">
-    <thead>
-      <tr>
-        <th class="px-2">{Position}</th>
-        <th class="px-2">{Name}</th>
-        <th class="px-2">{Balance}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for player in players %}
-      {% if forloop.counter == 1 %}
-      <tr class="text-yellow-300 text-shadow-aoc shadow-yellow-300">
-      {% elif forloop.counter == 2 %}
-      <tr class="text-zinc-300 text-shadow-aoc shadow-zinc-300">
-      {% elif forloop.counter == 3 %}
-      <tr class="text-yellow-700 text-shadow-aoc shadow-yellow-700">
-      {% else %}
-      <tr>
-      {% endif %}
-        <td class="px-2">{{ forloop.counter }}</td>
-        <td class="px-2">{{ player.0 }}</td>
-        <td class="px-2">{{ player.1 }}</td>
-      </tr>
-
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+<div class="board">
+<div class="board-row"><span class="white">{{ season.name }}</span> <span class="dim">{{ season.start_date|date:"Y-m-d" }} .. {{ season.end_date|date:"Y-m-d" }}</span></div>
+{% for player in players %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ player.balance|stringformat:"6d" }}</span>  <span class="board-name">{{ player.name }}</span></div>
+{% empty %}<div class="board-row dim">  (no games yet)</div>
+{% endfor %}</div>
+{% empty %}
+<p class="dim">No seasons yet.</p>
 {% endfor %}
 {% endblock %}

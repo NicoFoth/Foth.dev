@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Day 0 - Foth.dev{% endblock %}
+{% block description %}Day 0: Cold Boot. A small puzzle with your own input.{% endblock %}
+{% block content %}
+<article class="day-desc">
+  <h2>--- Day 0: Cold Boot ---</h2>
+  <p>Long before any of this was a website, it was a beige tower PC in an attic. You find it under a dust sheet, plug it in and flip the switch. The fans spin up, one LED starts blinking, and the screen stays <em>black</em>.</p>
+  <p>A sticky note on the case reads <code>BOOT CHECKSUM IN REG A. DON'T FORGET IT.</code> Underneath, in a different pen: <code>forgot it.</code></p>
+  <p>The boot ROM is a tiny program (your puzzle input) for a processor with four registers, <code>a</code>, <code>b</code>, <code>c</code> and <code>d</code>, which all start at <code>0</code>. It understands four instructions:</p>
+  <ul>
+    <li><code>mov x y</code> <em>copies</em> <code>x</code> (an integer or the value of a register) into register <span class="nowrap"><code>y</code>.</span></li>
+    <li><code>inc x</code> <em>increases</em> register <code>x</code> by one.</li>
+    <li><code>dec x</code> <em>decreases</em> register <code>x</code> by one.</li>
+    <li><code>jnz x y</code> <em>jumps</em> to the instruction <code>y</code> away (positive is forward, negative is backward), but only if <code>x</code> is <em>not zero</em>.</li>
+  </ul>
+  <p>The program halts as soon as it tries to execute an instruction outside of the program. For example:</p>
+<pre><code>mov 3 b
+inc a
+inc a
+dec b
+jnz b -3
+</code></pre>
+  <p>This adds <code>2</code> to <code>a</code>, three times. When it halts, register <code>a</code> contains <code><em>6</em></code>.</p>
+  <p>Run the boot program. <em>What value is left in register <code>a</code> when it halts?</em></p>
+</article>
+{% if part1 %}
+<p>Your puzzle answer was <code>{{ answer1 }}</code>.</p>
+<article class="day-desc">
+  <h2 id="part2">--- Part Two ---</h2>
+  <p>The checksum is accepted. The screen flickers on, a cursor blinks, and then the machine just sits there, thinking. Slowly. <em>Very</em> slowly.</p>
+  <p>On the front of the case there is a button labelled <code>TURBO</code>. Pressing it makes the boot ROM start with register <code>c</code> set to <code>1</code> instead of <code>0</code>. The other registers still start at <code>0</code>.</p>
+  <p>Your interpreter is going to need a coffee break. Possibly several.</p>
+  <p>With the turbo button pressed, <em>what value is left in register <code>a</code>?</em></p>
+</article>
+{% endif %}
+{% if part2 %}
+<p>Your puzzle answer was <code>{{ answer2 }}</code>.</p>
+<p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: <span class="gold glow">**</span></p>
+<p>At this point, all that is left is for you to <a href="{% url 'show_landing_page' %}">[admire the sky]</a>, or go and <a href="{% url 'stars_page' %}">[look for more stars]</a>.</p>
+<p>If you still want to see it, you can <a href="{% url 'puzzle_input' %}" target="_blank">[get your puzzle input]</a>.</p>
+{% else %}
+<form method="post" action="{% url 'puzzle_answer' %}" class="answer-form">
+  {% csrf_token %}
+  <input type="hidden" name="level" value="{% if part1 %}2{% else %}1{% endif %}">
+  <p>{% if not part1 %}To begin, <a href="{% url 'puzzle_input' %}" target="_blank">[get your puzzle input]</a>.</p>
+  <p>{% else %}Your puzzle input is still <a href="{% url 'puzzle_input' %}" target="_blank">[here]</a>.</p>
+  <p>{% endif %}<label for="answer">Answer:</label> <input type="text" name="answer" id="answer" autocomplete="off" inputmode="numeric"> <input type="submit" value="[Submit]"></p>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,18 +1,17 @@
-{% extends "base_new.html" %}
+{% extends "base.html" %}
+{% block title %}Teams - CS - Foth.dev{% endblock %}
 {% block content %}
-<form method="POST">
-    {% csrf_token %}
-
-    {% for field in selectform %}
-    {% for player in field %}
-
-        {{ player }}
-
-            
-    {% endfor %}
-    {% endfor %}
-
-    <br>
-    <input type="submit" class="btn btn-success" value="Generieren">
+<article>
+  <h2>--- Team Generator ---</h2>
+  <p>Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
+</article>
+<form method="post">
+  {% csrf_token %}
+  <div class="board">
+  {% for choice in selectform.players %}<label class="board-row" for="{{ choice.id_for_label }}">{{ choice.tag }}<span>{{ choice.choice_label }}</span></label>
+  {% endfor %}
+  </div>
+  {% for error in selectform.players.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+  <p><input type="submit" value="[Generieren]"> <a href="{% url 'cs_overview' %}">[Back]</a></p>
 </form>
 {% endblock content %}

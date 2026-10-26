@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Day 0 - Foth.dev{% endblock %}
+{% block content %}
+<article>
+{% if outcome == 'right' %}
+  <p><span class="day-success">That's the right answer!</span> {% if level == 1 %}You are one gold star closer to a working computer. <a href="{% url 'puzzle_day' %}#part2">[Continue to Part Two]</a>{% else %}The machine finishes booting with a cheerful <em>beep</em>. You found the last star of Day 0. <a href="{% url 'puzzle_day' %}">[Return to Day 0]</a>{% endif %}</p>
+{% elif outcome == 'wrong' %}
+  <p>That's not the right answer; your answer is too {{ direction }}. If you're stuck, make sure you're using the full input data. Please wait {{ cooldown }} seconds before trying again. <a href="{% url 'puzzle_day' %}">[Return to Day 0]</a></p>
+{% elif outcome == 'wait' %}
+  <p>You gave an answer too recently; you have to wait after submitting an answer before trying again. You have {{ left }}s left to wait. <a href="{% url 'puzzle_day' %}">[Return to Day 0]</a></p>
+{% elif outcome == 'nan' %}
+  <p>The machine only speaks integers, and <code>{{ guess|default:"nothing" }}</code> isn't one. <a href="{% url 'puzzle_day' %}">[Return to Day 0]</a></p>
+{% else %}
+  <p>You don't seem to be solving the right level. Did you already complete it? <a href="{% url 'puzzle_day' %}">[Return to Day 0]</a></p>
+{% endif %}
+</article>
+{% endblock %}
