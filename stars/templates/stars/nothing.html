@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Nothing to see here - Foth.dev{% endblock %}
+{% block description %}There is nothing to see here.{% endblock %}
+{% block content %}
+<article>
+  <h2>--- Nothing To See Here ---</h2>
+  <p>This page is listed in <a href="/robots.txt">[robots.txt]</a> under <code>Disallow</code>. Robots respect that. You, apparently, are not a robot.</p>
+  <p>That said, <em>curiosity is a feature</em>, not a bug. Have a star.</p>
+<pre class="dim">
+     .--.
+    |o_o |    <span class="white">beep.</span>
+    |:_/ |
+   //   \ \   <span class="white">you weren't supposed to read that.</span>
+  (|     | )
+ /'\_   _/`\
+ \___)=(___/
+</pre>
+  <p><a href="{% url 'stars_page' %}">[Return to the star list]</a></p>
+</article>
+{% endblock %}

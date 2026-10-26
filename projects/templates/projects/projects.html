@@ -1,24 +1,21 @@
 {% extends 'base.html' %}
-{% load static %}
-
-
+{% block title %}Projects - Foth.dev{% endblock %}
 {% block content %}
-<div class="gap-4 h-96 mx-auto">
-  {% for project in projects %}
-    <div class="relative h-full w-full lg:w-1/3 p-4 my-5 border-2 border-green-700">
-      <div class="overflow-hidden">
-        <div class="px-6 py-2">
-          <div class="font-bold text-2xl mb-2 text-yellow-400 text-shadow-aoc shadow-yellow-500">{{ project.title }}</div>
-          <p class="text-gray-400 overflow-y-auto max-h-64">
-            {{ project.short_description }}
-          </p>
-        </div>
-        <div class="absolute bottom-0 px-6 py-2">
-          <a href="{{ project.github_link }}" class="text-green-600 text-sm hover:text-shadow-aoc hover:shadow-green-500 hover:text-green-500">{Github}</a>
-          <a href="{{ project.read_more_link }}" class="text-green-600 text-sm hover:text-shadow-aoc hover:shadow-green-500 hover:text-green-500">{Read More}</a>
-        </div>
-      </div>
-    </div>
-  {% endfor %}
-</div>
+<article>
+  <h2>--- Projects ---</h2>
+  <p>Things I built after work, because I wanted them to exist.</p>
+</article>
+<div class="board ls">
+<div class="list-row"><span class="dim">$</span> <span class="white">ls -l ~/projects</span></div>
+<div class="list-row dim">total {{ projects|length }}</div>
+{% for project in projects %}<a class="list-row" href="{% url 'show_project' project.pk %}"><span class="dim">drwxr-xr-x  nico  nico  </span>{{ project.title }}/</a>
+{% empty %}<div class="list-row dim">(nothing here yet)</div>
+{% endfor %}</div>
+{% for project in projects %}
+<article id="p{{ project.pk }}">
+  <h2>--- {{ project.title }} ---</h2>
+  <p>{{ project.short_description|default:project.description|default:"No description yet."|truncatewords:60 }}</p>
+  <p><a href="{% url 'show_project' project.pk %}">[Read more]</a>{% if project.github_link %} <a href="{{ project.github_link }}">[GitHub]</a>{% endif %}{% if project.demo_link %} <a href="{{ project.demo_link }}">[Demo]</a>{% endif %}</p>
+</article>
+{% endfor %}
 {% endblock %}

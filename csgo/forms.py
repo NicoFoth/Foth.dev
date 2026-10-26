@@ -1,6 +1,11 @@
 from django import forms
-from .models import *
+
+from .models import CSPlayer
+
 
 class SelectPlayers(forms.Form):
-    #selected_players = forms.ModelMultipleChoiceField(queryset=CsgoPlayer.objects.all(), widget=forms.CheckboxSelectMultiple)
-    pass
+    players = forms.ModelMultipleChoiceField(
+        queryset=CSPlayer.objects.order_by('name'),
+        widget=forms.CheckboxSelectMultiple,
+        label='Spieler',
+    )

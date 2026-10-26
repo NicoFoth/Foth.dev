@@ -1,13 +1,21 @@
-{% extends 'base_new.html' %}
+{% extends "base.html" %}
+{% block title %}Log In - Foth.dev{% endblock %}
 {% block content %}
-<div class="container" style="margin-top: 3rem; text-align: center; color: #3898ec;">
-    <div class="row">
-        <form method="POST">
-            {% csrf_token %}
-        
-            {{ form.as_p}}
-            <input type="submit">
-        </form>
-    </div>
-</div>
+<article>
+  <h2>--- Log In ---</h2>
+  <p>This is the door to the admin area. If you're not me, the puzzle is more fun.</p>
+</article>
+<form method="post">
+  {% csrf_token %}
+  {% for error in form.non_field_errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+  {% for field in form %}
+  <div class="form-row">
+    {{ field.label_tag }}
+    {{ field }}
+    {% for error in field.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+  </div>
+  {% endfor %}
+  <input type="hidden" name="next" value="{{ next|default:'/admin/' }}">
+  <p><input type="submit" value="[Log In]"></p>
+</form>
 {% endblock %}

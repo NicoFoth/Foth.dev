@@ -23,5 +23,8 @@ urlpatterns = [
     path('cs/', include("csgo.urls"), name="cs"),
     path('poker/', include("poker.urls"), name="poker"),
     path('projects/', include("projects.urls"), name="projects"),
-    path('__reload__/', include('django_browser_reload.urls')),
+    path('puzzle/', include("puzzle.urls")),
+    path('', include("stars.urls")),
 ]
+
+handler404 = 'stars.views.not_found'

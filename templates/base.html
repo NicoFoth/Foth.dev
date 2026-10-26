@@ -1,27 +1,98 @@
-{% load static tailwind_tags %}
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}<!DOCTYPE html>
+<html lang="{% block lang %}en{% endblock %}">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    {% tailwind_css %}
-    
-    <title>Foth.dev</title>
-</head>
-<body class="bg-[#0F0F23]">
-    <div name="page-content" class="w-full sm:w-1/2 mx-5 font-mono">
-        <div name="navigation" class="items-end flex flex-row my-5">
-            <a class="basis-1/4" href="{% url 'show_landing_page' %}"><h1 class="text-lime-500 text-shadow-aoc shadow-lime-500  hover:text-red-500 hover:shadow-red-500">Foth.dev</h1></a>
-            <a class="basis-1/6" href="{% url 'show_about_page' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{About me}</h3></a>
-            <a class="basis-1/6" href="{% url 'show_projects' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{Projects}</h3></a>
-            <a class="basis-1/6" href="{% url 'show_contact_page' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{Contact}</h3></a>
-            <a class="basis-1/6" href="{% url 'show_poker_page' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{Poker}</h3></a>
-            <a class="basis-1/6" href="{% url 'cs_overview' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{CS}</h3></a>
-        </div>
-        {% block content %}
-        {% endblock content %}
-    </div>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0f0f23">
+<meta name="description" content="{% block description %}Nico Foth — software engineer. Projects, puzzles and other things built after hours.{% endblock %}">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>{% block title %}Foth.dev{% endblock %}</title>
+<link rel="icon" href="{% static 'favicon.ico' %}">
+<link rel="preload" href="{% static 'fonts/source-code-pro-latin-300.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{% static 'css/site.css' %}">
+<script src="{% static 'js/site.js' %}" defer></script>
+</head><!--
+
+    ███████╗ ██████╗ ████████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗
+    ██╔════╝██╔═══██╗╚══██╔══╝██║  ██║   ██╔══██╗██╔════╝██║   ██║
+    █████╗  ██║   ██║   ██║   ███████║   ██║  ██║█████╗  ██║   ██║
+    ██╔══╝  ██║   ██║   ██║   ██╔══██║   ██║  ██║██╔══╝  ╚██╗ ██╔╝
+    ██║     ╚██████╔╝   ██║   ██║  ██║██╗██████╔╝███████╗ ╚████╔╝
+    ╚═╝      ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝
+
+    Oh, hello there, fellow source reader.
+
+    No framework, no bundler, no tracking. Just Django, one stylesheet
+    and a bit of vanilla JS. The humans behind this are listed in
+    /humans.txt -- go say hi.
+
+-->
+<body data-stars="{{ star_keys|join:',' }}" data-star-order="{{ star_order|join:',' }}" data-claim-url="{% url 'stars_claim' %}">
+<header class="site-header">
+  <h1 class="title-global"><a href="{% url 'show_landing_page' %}">Foth.dev</a></h1>
+  <nav class="nav-main" aria-label="Main">
+    <ul>
+      <li><a href="{% url 'show_about_page' %}"{% if current == 'show_about_page' %} aria-current="page"{% endif %}>[About]</a></li>
+      <li><a href="{% url 'show_projects' %}"{% if current == 'show_projects' or current == 'show_project' %} aria-current="page"{% endif %}>[Projects]</a></li>
+      <li><a href="{% url 'show_contact_page' %}"{% if current == 'show_contact_page' %} aria-current="page"{% endif %}>[Contact]</a></li>
+      <li><a href="https://github.com/NicoFoth" rel="me noopener">[GitHub]</a></li>
+    </ul>
+  </nav>
+  <div class="user">
+    {% if user.is_authenticated %}<span class="dim">{{ user.get_username }}</span> {% endif %}<a href="{% url 'stars_page' %}" class="star-count" title="Stars collected"><span data-star-count>{{ star_count }}</span>*</a>
+  </div>
+  <h1 class="title-event"><span class="title-event-wrap">{{ subtitle.0 }}</span><span class="title-bright">nico</span><span class="title-event-wrap">{{ subtitle.1 }}</span></h1>
+  <nav class="nav-sub" aria-label="More">
+    <ul>
+      <li><a href="{% url 'puzzle_day' %}"{% if current == 'puzzle_day' %} aria-current="page"{% endif %}>[Puzzle]</a></li>
+      <li><a href="{% url 'stars_page' %}"{% if current == 'stars_page' %} aria-current="page"{% endif %}>[Stars]</a></li>
+      <li><a href="{% url 'cs_overview' %}"{% if current == 'cs_overview' %} aria-current="page"{% endif %}>[CS]</a></li>
+      <li><a href="{% url 'show_poker_page' %}"{% if current == 'show_poker_page' %} aria-current="page"{% endif %}>[Poker]</a></li>
+      <li><a href="#terminal" data-open-terminal>[Terminal]</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="page">
+  <main>
+    {% for message in messages %}
+      {% if 'star' in message.tags %}
+        <div class="toast" role="status">{{ message }}</div>
+      {% else %}
+        <p class="notice notice-{{ message.level_tag }}" role="status">{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+  <aside id="sidebar">
+    {% block sidebar %}
+    <p><span class="sb-label">uptime</span><br><span data-uptime="2002-09-03T00:00:00">--.---------</span><span class="dim"> years</span></p>
+    <p><span class="sb-label">This site runs on</span>
+      <br><a href="https://www.djangoproject.com/">Django</a> {{ versions.django }}
+      <br><a href="https://www.python.org/">Python</a> {{ versions.python }}
+      <br><a href="https://sqlite.org/">SQLite</a> {{ versions.sqlite }}
+      <br><span class="dim">and too much coffee.</span>
+    </p>
+    <p><span class="sb-label">Stars found</span><br><a href="{% url 'stars_page' %}" class="star-count" data-star-count>{{ star_count }}</a><span class="dim">/{{ star_total }}</span></p>
+    <p class="quiet">Press <code>:</code> for a terminal, <code>?</code> for shortcuts.</p>
+    {% endblock %}
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <span><a href="{% url 'show_legal_page' %}">[Legal]</a></span>
+  <span>rendered in <!--render-ms--></span>
+  <span>build <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
+  <span>no trackers, no analytics</span>
+</footer>
+
+<div class="terminal" id="terminal" hidden>
+  <div class="terminal-out" aria-live="polite"></div>
+  <form class="terminal-line" autocomplete="off">
+    <label class="terminal-prompt" for="terminal-input">visitor@foth.dev:~$ </label>
+    <input class="terminal-input" id="terminal-input" type="text" spellcheck="false" autocapitalize="off" aria-label="Terminal command">
+  </form>
+</div>
 </body>
 </html>
