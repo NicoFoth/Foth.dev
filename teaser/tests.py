@@ -33,7 +33,7 @@ class TeaserViewTests(TestCase):
         return self.client.post(reverse('teaser:check'), {'task': task, 'answer': answer}, follow=True)
 
     def bits(self):
-        return self.client.session.get('stars', [])
+        return self.client.session.get('bits', [])
 
     def test_parts_can_be_solved_in_any_order(self):
         self.assertNotContains(self.check('b', '0x3ff'), 'Both parts solved')

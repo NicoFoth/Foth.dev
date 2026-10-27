@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pages',
-    'stars',
+    'bits',
     'teaser',
     'projects',
     'csgo',
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'stars.middleware.SeenPagesMiddleware',
+    'bits.middleware.SeenPagesMiddleware',
 ]
 
 ROOT_URLCONF = 'webservice.urls'
@@ -69,7 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'pages.context_processors.site',
-                'stars.context_processors.stars',
+                'bits.context_processors.bits',
             ],
         },
     },

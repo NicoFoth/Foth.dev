@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from stars.progress import award, collected
+from bits.progress import award, collected
 
 ANSWERS = {'a': 8, 'b': 1023}
 BITS = {'a': 'teaser_a', 'b': 'teaser_b'}

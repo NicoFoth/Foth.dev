@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from stars.progress import award
+from bits.progress import award
 
 from . import landing
 from .context_processors import versions
@@ -60,7 +60,7 @@ def robots_txt(request):
         'User-agent: *',
         f"Disallow: {reverse('admin:index')}",
         f"Disallow: {reverse('pages:login')}",
-        f"Disallow: {reverse('stars:nothing')}",
+        f"Disallow: {reverse('bits:nothing')}",
         '',
     ]))
 
@@ -82,7 +82,7 @@ def humans_txt(request):
     Font: Source Code Pro (self-hosted)
     Build step: none
 
-    You found a star for reading this. Check {request.build_absolute_uri(reverse('stars:index'))}
+    You found a star for reading this. Check {request.build_absolute_uri(reverse('bits:index'))}
 """)
 
 
