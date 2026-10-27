@@ -7,13 +7,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 3.13 is what the server and Dockerfile run; 3.14 is the newest
+        python-version: ['3.13', '3.14']
     env:
       DJANGO_SECRET: ci-only-not-a-secret
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: ${{ matrix.python-version }}
           cache: pip
       - run: pip install -r requirements.txt
       - name: Migrations match the models
