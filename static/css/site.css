@@ -557,6 +557,8 @@ tr.group th { padding-top: .9rem; color: var(--text); font-size: .875rem; font-w
 .art .dim { color: var(--dim); text-shadow: none; }
 .art .say { color: var(--text); text-shadow: none; }
 
+/* the path comes from the URL and can be any length, so wrap it instead of scrolling */
+.shell { white-space: pre-wrap; overflow-wrap: anywhere; }
 .shell .prompt { color: var(--dim); user-select: none; }
 .shell .err { color: var(--coral); }
 
