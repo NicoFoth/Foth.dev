@@ -1,21 +1,10 @@
 import functools
 import platform
-import random
 import sqlite3
 from pathlib import Path
 
 import django
 from django.conf import settings
-
-# Like the year under the Advent of Code logo, the name under ours is wrapped
-# in a different language's syntax on every request.
-SUBTITLES = [
-    ('λ.', ''), ('{:', '}'), ('<', '/>'), ('/*', '*/'), ('$', ''), ('&', ''),
-    ('', '++'), ('', '!()'), ('@', ''), ('', '()'), ('#', ''), ('', ';'),
-    ("'", ''), ('(', ')'), ('//', ''), ('*', ''), ('::', ''), ('%', ''),
-    ('--', ''), ('0x', ''), ('$(', ')'), ('`', '`'), ('[', ']'), ('', ':='),
-]
-
 
 @functools.lru_cache(maxsize=1)
 def build_sha():
@@ -49,9 +38,10 @@ def versions():
 def site(request):
     match = getattr(request, 'resolver_match', None)
     return {
-        'subtitle': random.choice(SUBTITLES),
         'build_sha': build_sha(),
         'versions': versions(),
+        # shown in the status line, like a shell prompt: ~/cs/season/3
+        'shell_path': '~' + request.path.rstrip('/'),
         # 'pages:about' and 'projects' respectively; the nav uses them to mark the current page
         'current': match.view_name if match else '',
         'section': match.namespace if match else '',

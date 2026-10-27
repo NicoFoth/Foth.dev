@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
 {% load csgo_extras %}
-{% block title %}CS Rankings - Foth.dev{% endblock %}
+{% block title %}CS rankings - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- CS Rankings ---</h2>
-  <p>Elo ladder for our Counter-Strike evenings. Ten matches in a season and you are ranked; until then, you are just a number. Click a season for matches, or a player for their stats.</p>
-</article>
+<h1>CS rankings</h1>
+<p class="lead">Elo ladder for our Counter-Strike evenings. Ten matches in a season and you are ranked; until then, you are just a number. Open a season for its matches, or a player for their stats.</p>
+<div class="actions"><a class="button" href="{% url 'cs:select_players' %}">Generate balanced teams</a></div>
 {% for season, elos in seasons.items %}
-<div class="board">
-<div class="board-row"><a href="{% url 'cs:season' season_id=season.id %}" class="white">{{ season.name }}</a> <span class="dim">{{ season.startDate|date:"Y-m-d" }} .. {{ season.endDate|date:"Y-m-d" }}</span></div>
-{% for row in elos %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</div>
-{% empty %}<div class="board-row dim">  (no players yet)</div>
-{% endfor %}</div>
+<div class="table-wrap">
+<table>
+  <caption><a href="{% url 'cs:season' season_id=season.id %}">{{ season.name }}</a> <span class="dim">{{ season.startDate|date:"Y-m-d" }} to {{ season.endDate|date:"Y-m-d" }}</span></caption>
+  <thead><tr><th class="rank" scope="col">#</th><th scope="col">Player</th><th class="num" scope="col">Elo</th></tr></thead>
+  <tbody>
+  {% for row in elos %}
+    <tr{% if forloop.first %} class="first"{% endif %}><td class="rank">{{ forloop.counter }}</td><td><a href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</td><td class="num">{{ row.elo }}</td></tr>
+  {% empty %}
+    <tr><td colspan="3" class="dim">No players yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
 {% empty %}
 <p class="dim">No seasons yet.</p>
 {% endfor %}
-<p><a href="{% url 'cs:select_players' %}">[Generate balanced teams]</a></p>
 {% endblock %}

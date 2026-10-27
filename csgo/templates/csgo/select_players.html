@@ -1,17 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Teams - CS - Foth.dev{% endblock %}
+{% block title %}Team generator - CS - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- Team Generator ---</h2>
-  <p>Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
-</article>
+<h1>Team generator</h1>
+<p class="lead">Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
 <form method="post">
   {% csrf_token %}
-  <div class="board">
-  {% for choice in selectform.players %}<label class="board-row" for="{{ choice.id_for_label }}">{{ choice.tag }}<span>{{ choice.choice_label }}</span></label>
-  {% endfor %}
-  </div>
-  {% for error in selectform.players.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-  <p><input type="submit" value="[Generieren]"> <a href="{% url 'cs:index' %}">[Back]</a></p>
+  <fieldset class="checks">
+    <legend class="visually-hidden">Players</legend>
+    {% for choice in selectform.players %}<label for="{{ choice.id_for_label }}">{{ choice.tag }}<span>{{ choice.choice_label }}</span></label>
+    {% endfor %}
+  </fieldset>
+  {% for error in selectform.players.errors %}<p class="form-error" role="alert">{{ error }}</p>{% endfor %}
+  <div class="actions"><button type="submit">Generieren</button> <a href="{% url 'cs:index' %}">Back to the rankings</a></div>
 </form>
 {% endblock content %}

@@ -2,20 +2,20 @@
 {% block title %}418 I'm a teapot - Foth.dev{% endblock %}
 {% block content %}
 <article>
-  <h2>--- 418 I'm a teapot ---</h2>
-  <p>The server refuses to brew coffee because it is, permanently, a teapot. See <a href="https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2">[RFC 2324]</a>, section 2.3.2.</p>
-<pre class="calendar teapot" aria-hidden="true">
-<span class="dim">                )  (</span>
-<span class="dim">               (   ) )</span>
-<span class="sc-A">                 ()</span>
-<span class="sc-A">             .--'  '--.</span>
-<span class="sc-A">      __    /          \   .-.</span>
-<span class="sc-A">      \ \__|            |-' /</span>
-<span class="sc-A">       \___|            |__/</span>
-<span class="sc-A">            \__________/</span>
-<span class="sc-e">        ~~~~~~~~~~~~~~~~~~~~~~</span>
+  <h1>418 I'm a teapot</h1>
+  <p>The server refuses to brew coffee because it is, permanently, a teapot. See <a href="https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2">RFC 2324</a>, section 2.3.2.</p>
+<pre class="art" aria-hidden="true">
+<span class="dim">                )  (
+               (   ) )</span>
+                 ()
+             .--'  '--.
+      __    /          \   .-.
+      \ \__|            |-' /
+       \___|            |__/
+            \__________/
+<span class="dim">        ~~~~~~~~~~~~~~~~~~~~~~</span>
 </pre>
-  <p>Your request came back with HTTP status <em>418</em>. You can check: <code>curl -I {{ request.build_absolute_uri }}</code></p>
-  <p>Have a star for asking politely.</p>
+  <p>Your request came back with HTTP status 418. You can check: <code>curl -I {{ request.build_absolute_uri }}</code></p>
+  <p>That is worth a bit, for asking politely.</p>
 </article>
 {% endblock %}

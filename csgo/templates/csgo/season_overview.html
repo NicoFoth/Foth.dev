@@ -2,24 +2,45 @@
 {% load csgo_extras %}
 {% block title %}{{ season.name }} - CS - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- {{ season.name }} ---</h2>
-  <p><span class="dim">{{ season.startDate|date:"Y-m-d" }} .. {{ season.endDate|date:"Y-m-d" }}</span> <a href="{% url 'cs:index' %}">[All seasons]</a></p>
-</article>
-<div class="board">
-<div class="board-row board-head">Ranked <span class="dim">({{ ranked_after }}+ matches)</span></div>
-{% for row in ranked_players %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</div>
-{% empty %}<div class="board-row dim">  Nobody has played {{ ranked_after }} matches yet.</div>
-{% endfor %}</div>
+<h1>{{ season.name }}</h1>
+<p class="lead"><span class="dim">{{ season.startDate|date:"Y-m-d" }} to {{ season.endDate|date:"Y-m-d" }}.</span> <a href="{% url 'cs:index' %}">All seasons</a></p>
+<div class="table-wrap">
+<table>
+  <caption>Ranked <span class="dim">{{ ranked_after }} or more matches</span></caption>
+  <thead><tr><th class="rank" scope="col">#</th><th scope="col">Player</th><th class="num" scope="col">Elo</th></tr></thead>
+  <tbody>
+  {% for row in ranked_players %}
+    <tr{% if forloop.first %} class="first"{% endif %}><td class="rank">{{ forloop.counter }}</td><td><a href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</td><td class="num">{{ row.elo }}</td></tr>
+  {% empty %}
+    <tr><td colspan="3" class="dim">Nobody has played {{ ranked_after }} matches yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
 {% if unranked_players %}
-<div class="board">
-<div class="board-row board-head">Unranked</div>
-{% for row in unranked_players %}<div class="board-row"><span class="board-rank">  -)</span> <span class="board-score dim">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a></div>
-{% endfor %}</div>
+<div class="table-wrap">
+<table>
+  <caption>Unranked</caption>
+  <thead><tr><th class="rank" scope="col">#</th><th scope="col">Player</th><th class="num" scope="col">Elo</th></tr></thead>
+  <tbody>
+  {% for row in unranked_players %}
+    <tr><td class="rank dim">-</td><td><a href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a></td><td class="num dim">{{ row.elo }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
 {% endif %}
-<div class="board">
-<div class="board-row board-head">Matches</div>
-{% for match in matches %}<a class="board-row" href="{% url 'cs:match' match_id=match.id %}"><span class="dim">{{ match.date|date:"Y-m-d H:i" }}</span>  {{ match.map.name|ljust:"10" }} <span class="white">{{ match.endstate|rjust:"5" }}</span>  <span class="dim">{{ match.mode.name }}</span></a>
-{% empty %}<div class="board-row dim">  No matches yet.</div>
-{% endfor %}</div>
+<div class="table-wrap">
+<table>
+  <caption>Matches</caption>
+  <thead><tr><th scope="col">Date</th><th scope="col">Map</th><th class="num" scope="col">Score</th><th scope="col">Mode</th></tr></thead>
+  <tbody>
+  {% for match in matches %}
+    <tr><td class="dim">{{ match.date|date:"Y-m-d H:i" }}</td><td><a href="{% url 'cs:match' match_id=match.id %}">{{ match.map.name }}</a></td><td class="num">{{ match.endstate }}</td><td class="dim">{{ match.mode.name }}</td></tr>
+  {% empty %}
+    <tr><td colspan="4" class="dim">No matches yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
 {% endblock %}

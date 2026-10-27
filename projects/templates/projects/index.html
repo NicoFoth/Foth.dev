@@ -1,21 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Projects - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- Projects ---</h2>
-  <p>Things I built after work, because I wanted them to exist.</p>
-</article>
-<div class="board ls">
-<div class="list-row"><span class="dim">$</span> <span class="white">ls -l ~/projects</span></div>
-<div class="list-row dim">total {{ projects|length }}</div>
-{% for project in projects %}<a class="list-row" href="{% url 'projects:detail' project.pk %}"><span class="dim">drwxr-xr-x  nico  nico  </span>{{ project.title }}/</a>
-{% empty %}<div class="list-row dim">(nothing here yet)</div>
-{% endfor %}</div>
+<h1>Projects</h1>
+<p class="lead">Things I built after work, because I wanted them to exist.</p>
+<ul class="entries">
 {% for project in projects %}
-<article id="p{{ project.pk }}">
-  <h2>--- {{ project.title }} ---</h2>
-  <p>{{ project.short_description|default:project.description|default:"No description yet."|truncatewords:60 }}</p>
-  <p><a href="{% url 'projects:detail' project.pk %}">[Read more]</a>{% if project.github_link %} <a href="{{ project.github_link }}">[GitHub]</a>{% endif %}{% if project.demo_link %} <a href="{{ project.demo_link }}">[Demo]</a>{% endif %}</p>
-</article>
+  <li class="entry" id="p{{ project.pk }}">
+    <h2><a href="{% url 'projects:detail' project.pk %}">{{ project.title }}</a></h2>
+    <p>{{ project.short_description|default:project.description|default:"No description yet."|truncatewords:60 }}</p>
+    {% if project.github_link or project.demo_link %}<p class="links">{% if project.github_link %}<a href="{{ project.github_link }}">Source on GitHub</a>{% endif %}{% if project.demo_link %}<a href="{{ project.demo_link }}">Try it</a>{% endif %}</p>{% endif %}
+  </li>
+{% empty %}
+  <li class="entry dim">Nothing here yet.</li>
 {% endfor %}
+</ul>
 {% endblock %}

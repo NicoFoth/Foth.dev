@@ -1,22 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Contact - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- Contact ---</h2>
-  <p>Found a bug, solved the puzzle in a weird language, or want to talk about a project? Leave a message. It lands in a database table that I actually read.</p>
-</article>
-<form method="post" class="contact-form" novalidate>
+<h1>Contact</h1>
+<p class="lead">Found a bug, have a neater solution to the brain teaser, or want to talk about a project? Leave a message. It lands in a database table that I actually read.</p>
+<form method="post" novalidate>
   {% csrf_token %}
-  {% for error in form.non_field_errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+  {% for error in form.non_field_errors %}<p class="form-error" role="alert">{{ error }}</p>{% endfor %}
   {% for field in form %}{% if field.name == 'website' %}
   <div class="hp" aria-hidden="true">{{ field.label_tag }} <input type="text" name="{{ field.html_name }}" id="{{ field.id_for_label }}" tabindex="-1" autocomplete="off"></div>
   {% else %}
-  <div class="form-row">
+  <div class="field">
     {{ field.label_tag }}
     {{ field }}
-    {% for error in field.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+    {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
   </div>
   {% endif %}{% endfor %}
-  <p><input type="submit" value="[Send]"></p>
+  <div class="actions"><button type="submit">Send message</button></div>
 </form>
 {% endblock %}

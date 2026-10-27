@@ -2,14 +2,15 @@
 <html lang="{% block lang %}en{% endblock %}">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0f0f23">
-<meta name="description" content="{% block description %}Nico Foth — software engineer. Projects, puzzles and other things built after hours.{% endblock %}">
+<meta name="theme-color" content="#0C1A1D">
+<meta name="description" content="{% block description %}Nico Foth, software engineer. Projects, a brain teaser and other things built after hours.{% endblock %}">
 <meta name="csrf-token" content="{{ csrf_token }}">
 <title>{% block title %}Foth.dev{% endblock %}</title>
 <link rel="icon" href="{% static 'favicon.ico' %}">
-<link rel="preload" href="{% static 'fonts/source-code-pro-latin-300.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'fonts/b612-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'fonts/b612-latin-700-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{% static 'css/site.css' %}?v={{ build_sha }}">
 <script src="{% static 'js/site.js' %}?v={{ build_sha }}" defer></script>
 </head><!--
@@ -24,75 +25,72 @@
     Oh, hello there, fellow source reader.
 
     No framework, no bundler, no tracking. Just Django, one stylesheet
-    and a bit of vanilla JS. The humans behind this are listed in
-    /humans.txt -- go say hi.
+    and a bit of vanilla JS. The type is B612, which Airbus had made for
+    cockpit displays, with IBM Plex Mono for code. The humans behind this
+    are listed in /humans.txt.
+
+    Twelve bits are hidden on this site. /robots.txt is a good start.
 
 -->
-<body data-stars="{{ bit_keys|join:',' }}" data-star-order="{{ bit_order|join:',' }}" data-claim-url="{% url 'bits:claim' %}">
-<header class="site-header">
-  <h1 class="title-global"><a href="{% url 'pages:home' %}">Foth.dev</a></h1>
-  <nav class="nav-main" aria-label="Main">
+<body data-bits="{{ bit_keys|join:',' }}" data-bit-order="{{ bit_order|join:',' }}" data-claim-url="{% url 'bits:claim' %}">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <a class="wordmark" href="{% url 'pages:home' %}"{% if current == 'pages:home' %} aria-current="page"{% endif %}>foth<span>.dev</span></a>
+  <nav class="nav" aria-label="Main">
     <ul>
-      <li><a href="{% url 'pages:about' %}"{% if current == 'pages:about' %} aria-current="page"{% endif %}>[About]</a></li>
-      <li><a href="{% url 'projects:index' %}"{% if section == 'projects' %} aria-current="page"{% endif %}>[Projects]</a></li>
-      <li><a href="{% url 'pages:contact' %}"{% if current == 'pages:contact' %} aria-current="page"{% endif %}>[Contact]</a></li>
-      <li><a href="https://github.com/NicoFoth" rel="me noopener">[GitHub]</a></li>
-    </ul>
-  </nav>
-  <div class="user">
-    {% if user.is_authenticated %}<span class="dim">{{ user.get_username }}</span> {% endif %}<a href="{% url 'bits:index' %}" class="star-count" title="Stars collected"><span data-star-count>{{ bit_count }}</span>*</a>
-  </div>
-  <h1 class="title-event"><span class="title-event-wrap">{{ subtitle.0 }}</span><span class="title-bright">nico</span><span class="title-event-wrap">{{ subtitle.1 }}</span></h1>
-  <nav class="nav-sub" aria-label="More">
-    <ul>
-      <li><a href="{% url 'teaser:sheet' %}"{% if section == 'teaser' %} aria-current="page"{% endif %}>[Puzzle]</a></li>
-      <li><a href="{% url 'bits:index' %}"{% if current == 'bits:index' %} aria-current="page"{% endif %}>[Stars]</a></li>
-      <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}>[CS]</a></li>
-      <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}>[Poker]</a></li>
-      <li><a href="#terminal" data-open-terminal>[Terminal]</a></li>
+      <li><a href="{% url 'pages:about' %}"{% if current == 'pages:about' %} aria-current="page"{% endif %}>About</a></li>
+      <li><a href="{% url 'projects:index' %}"{% if section == 'projects' %} aria-current="page"{% endif %}>Projects</a></li>
+      <li><a href="{% url 'teaser:sheet' %}"{% if section == 'teaser' %} aria-current="page"{% endif %}>Brain teaser</a></li>
+      <li><a href="{% url 'bits:index' %}"{% if current == 'bits:index' %} aria-current="page"{% endif %}>Bits</a></li>
+      <li><a href="{% url 'pages:contact' %}"{% if current == 'pages:contact' %} aria-current="page"{% endif %}>Contact</a></li>
+      <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}>CS</a></li>
+      <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}>Poker</a></li>
+      <li><a href="https://github.com/NicoFoth" rel="me noopener">GitHub</a></li>
     </ul>
   </nav>
 </header>
 
-<div class="page">
-  <main>
-    {% for message in messages %}
-      {% if 'star' in message.tags %}
-        <div class="toast" role="status">{{ message }}</div>
-      {% else %}
-        <p class="notice notice-{{ message.level_tag }}" role="status">{{ message }}</p>
-      {% endif %}
-    {% endfor %}
-    {% block content %}{% endblock %}
-  </main>
-  <aside id="sidebar">
-    {% block sidebar %}
-    <p><span class="sb-label">uptime</span><br><span data-uptime="2002-09-03T00:00:00">--.---------</span><span class="dim"> years</span></p>
-    <p><span class="sb-label">This site runs on</span>
-      <br><a href="https://www.djangoproject.com/">Django</a> {{ versions.django }}
-      <br><a href="https://www.python.org/">Python</a> {{ versions.python }}
-      <br><a href="https://sqlite.org/">SQLite</a> {{ versions.sqlite }}
-      <br><span class="dim">and too much coffee.</span>
-    </p>
-    <p><span class="sb-label">Stars found</span><br><a href="{% url 'bits:index' %}" class="star-count" data-star-count>{{ bit_count }}</a><span class="dim">/{{ bit_total }}</span></p>
-    <p class="quiet">Press <code>:</code> for a terminal, <code>?</code> for shortcuts.</p>
-    {% endblock %}
-  </aside>
-</div>
+<main id="main" class="{% block main_class %}column{% endblock %}">
+  {% for message in messages %}{% if 'bit' not in message.tags %}
+  <p class="notice notice-{{ message.level_tag }}" role="status">{{ message }}</p>
+  {% endif %}{% endfor %}
+  {% block content %}{% endblock %}
+</main>
 
-<footer class="site-footer">
-  <span><a href="{% url 'pages:legal' %}">[Legal]</a></span>
-  <span>rendered in <!--render-ms--></span>
-  <span>build <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
-  <span>no trackers, no analytics</span>
+<footer class="footer">
+  <a href="{% url 'pages:legal' %}"{% if current == 'pages:legal' %} aria-current="page"{% endif %}>Legal</a>
+  <span>Build <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
+  <span>Rendered in <!--render-ms--></span>
+  <span>Django {{ versions.django }}, Python {{ versions.python }}, SQLite {{ versions.sqlite }}</span>
+  <span>No trackers, no analytics</span>
+  {% if user.is_authenticated %}<span>Signed in as {{ user.get_username }}</span>{% endif %}
 </footer>
 
+<div class="toasts" aria-live="polite">
+  {% for message in messages %}{% if 'bit' in message.tags %}<p class="toast">{{ message }}</p>{% endif %}{% endfor %}
+</div>
+
 <div class="terminal" id="terminal" hidden>
+  <div class="terminal-bar">
+    <span>visitor@foth.dev</span>
+    <button type="button" class="terminal-close" data-close-terminal aria-label="Close terminal">Esc</button>
+  </div>
   <div class="terminal-out" aria-live="polite"></div>
   <form class="terminal-line" autocomplete="off">
-    <label class="terminal-prompt" for="terminal-input">visitor@foth.dev:~$ </label>
-    <input class="terminal-input" id="terminal-input" type="text" spellcheck="false" autocapitalize="off" aria-label="Terminal command">
+    <label class="terminal-prompt" for="terminal-input">visitor@foth.dev:~$</label>
+    <input class="terminal-input" id="terminal-input" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="send">
   </form>
 </div>
+
+<aside class="status" aria-label="Status">
+  <span class="status-path">{{ shell_path }}</span>
+  <a class="register" href="{% url 'bits:index' %}" aria-label="{{ bit_count }} of {{ bit_total }} bits found">
+    <span class="leds" aria-hidden="true">{% for key in bit_order reversed %}<i class="led{% if key in bit_keys %} on{% endif %}" data-bit="{{ key }}"></i>{% endfor %}</span>
+    <span class="register-count" aria-hidden="true"><span data-bit-count>{{ bit_count }}</span>/{{ bit_total }}</span>
+  </a>
+  <span class="status-uptime">up <span data-uptime="2002-09-03T00:00:00">24.1</span> years</span>
+  <button type="button" class="status-terminal" data-open-terminal aria-controls="terminal" aria-expanded="false"><span aria-hidden="true">&gt;_</span> <span class="status-label">Terminal</span></button>
+</aside>
 </body>
 </html>

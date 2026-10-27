@@ -4,28 +4,33 @@
 
   const body = document.body;
   const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-  const order = (body.dataset.starOrder || '').split(',').filter(Boolean);
-  const have = new Set((body.dataset.stars || '').split(',').filter(Boolean));
+  const order = (body.dataset.bitOrder || '').split(',').filter(Boolean);
+  const have = new Set((body.dataset.bits || '').split(',').filter(Boolean));
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
   const store = {
     get(key) { try { return localStorage.getItem(key); } catch { return null; } },
     set(key, value) { try { localStorage.setItem(key, value); } catch { /* private mode */ } },
   };
 
-  /* ------------------------------------------------------------- stars */
+  /* -------------------------------------------------------------- bits */
+
+  // Twelve bits make a register. The status line shows it as LEDs, bit 0 on the right.
+  const toasts = document.querySelector('.toasts');
 
   function toast(text) {
-    const el = document.createElement('div');
+    const el = document.createElement('p');
     el.className = 'toast';
-    el.setAttribute('role', 'status');
     el.textContent = text;
-    body.appendChild(el);
-    setTimeout(() => el.remove(), 5200);
+    toasts.appendChild(el);
+    setTimeout(() => el.remove(), 5600);
   }
 
-  function lightSlot(key) {
-    const slot = document.querySelector(`[data-slot="${order.indexOf(key)}"]`);
-    if (slot) slot.className = 'sc-O';
+  function setLed(key) {
+    const led = document.querySelector(`.leds [data-bit="${key}"]`);
+    if (!led) return;
+    led.classList.add('on', 'just-on');
+    led.addEventListener('animationend', () => led.classList.remove('just-on'), { once: true });
   }
 
   async function claim(key, extra = {}) {
@@ -46,12 +51,13 @@
     return data;
   }
 
-  // The server already recorded the star; just tell the visitor.
+  // The server already recorded the bit; just tell the visitor.
   function celebrate(key, title) {
     have.add(key);
-    document.querySelectorAll('[data-star-count]').forEach((el) => { el.textContent = have.size; });
-    lightSlot(key);
-    toast(`You found a star: ${title}! [${have.size}/${order.length}]`);
+    document.querySelectorAll('[data-bit-count]').forEach((el) => { el.textContent = have.size; });
+    document.querySelector('.register')?.setAttribute('aria-label', `${have.size} of ${order.length} bits found`);
+    setLed(key);
+    toast(`Bit set: ${title}. ${have.size} of ${order.length} found.`);
   }
 
   /* ------------------------------------------------------------ uptime */
@@ -60,9 +66,9 @@
   if (uptime) {
     const born = new Date(uptime.dataset.uptime).getTime();
     const year = 365.2425 * 24 * 3600 * 1000;
-    const tick = () => { uptime.textContent = ((Date.now() - born) / year).toFixed(9); };
+    const tick = () => { uptime.textContent = ((Date.now() - born) / year).toFixed(reduceMotion.matches ? 4 : 9); };
     tick();
-    setInterval(tick, 50);
+    setInterval(tick, reduceMotion.matches ? 60000 : 50);
   }
 
   /* --------------------------------------------------------- night owl */
@@ -70,36 +76,46 @@
   const hour = new Date().getHours();
   if (hour < 5 && !have.has('owl')) claim('owl');
 
-  /* -------------------------------------------------------------- moon */
+  /* ------------------------------------------------------- loose LED */
 
-  let moonClicks = 0;
-  document.addEventListener('click', (event) => {
-    const moon = event.target.closest('.moon');
-    if (!moon) return;
-    event.preventDefault();
-    moonClicks += 1;
-    document.querySelectorAll('.moon').forEach((el) => {
-      el.style.textShadow = `0 0 ${4 + moonClicks * 4}px #ffff99`;
+  // One LED on the front page panel flickers. Tap it three times and it holds.
+  const loose = document.querySelector('[data-loose]');
+  if (loose) {
+    let taps = 0;
+    const tap = () => {
+      if (loose.classList.contains('fixed')) return;
+      taps += 1;
+      loose.classList.remove('jolt');
+      void loose.getBoundingClientRect();  // restart the jolt animation
+      loose.classList.add('jolt');
+      if (taps < 3) return;
+      loose.classList.add('fixed');
+      loose.setAttribute('aria-label', 'Repaired LED');
+      claim('flicker');
+    };
+    loose.addEventListener('click', tap);
+    loose.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); tap(); }
     });
-    if (moonClicks === 3) claim('moon');
-  });
+  }
 
   /* ------------------------------------------------------------ konami */
 
   const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let konamiAt = 0;
 
-  function starfall() {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    for (let i = 0; i < 40; i++) {
-      const star = document.createElement('span');
-      star.className = 'falling-star';
-      star.textContent = '*';
-      star.style.left = `${Math.random() * 100}vw`;
-      star.style.animationDuration = `${1.5 + Math.random() * 2.5}s`;
-      star.style.animationDelay = `${Math.random() * 1.5}s`;
-      body.appendChild(star);
-      setTimeout(() => star.remove(), 6000);
+  function bitRain() {
+    if (reduceMotion.matches) return;
+    for (let i = 0; i < 48; i++) {
+      const bit = document.createElement('span');
+      bit.className = 'rain';
+      bit.setAttribute('aria-hidden', 'true');
+      bit.textContent = Math.random() < .5 ? '0' : '1';
+      bit.style.left = `${Math.random() * 100}vw`;
+      bit.style.animationDuration = `${1.5 + Math.random() * 2.5}s`;
+      bit.style.animationDelay = `${Math.random() * 1.5}s`;
+      body.appendChild(bit);
+      setTimeout(() => bit.remove(), 6000);
     }
   }
 
@@ -107,7 +123,7 @@
     konamiAt = key === KONAMI[konamiAt] ? konamiAt + 1 : (key === KONAMI[0] ? 1 : 0);
     if (konamiAt === KONAMI.length) {
       konamiAt = 0;
-      starfall();
+      bitRain();
       claim('konami');
     }
   }
@@ -130,14 +146,14 @@
     'readme.txt': () => [
       'foth.dev',
       '========',
-      'A personal site, built like a terminal and lit like Advent of Code.',
+      'A personal site, lit like a cockpit at night.',
       '',
-      'There are ' + order.length + ' stars hidden around here. `stars` shows your progress.',
+      order.length + ' bits are hidden around here. `bits` shows your register.',
       'Pages are directories. `ls` lists them, `cd` goes there.',
     ],
     'todo.txt': () => [
       '[x] rewrite the website',
-      '[x] hide some stars',
+      '[x] hide some bits',
       '[ ] write more blog posts (there is no blog)',
       '[ ] sleep',
     ],
@@ -173,14 +189,14 @@
         '  ls                 list pages and files',
         '  cd <page>          go to a page (also: open)',
         '  cat <file>         print a file',
-        '  stars              show your star count',
+        '  bits               show which bits are set',
         '  unlock <code>      redeem a code found elsewhere',
         '  whoami, pwd, date, uptime, echo, history, clear',
         '  contrast           toggle high-contrast mode',
         '  exit               close the terminal (or press Esc)',
         '',
         'Keyboard: `:` opens this terminal, `?` shows this help,',
-        '`g` then h/a/p/z/s/c jumps to home/about/projects/puzzle/stars/contact.',
+        '`g` then h/a/p/t/b/c jumps to home/about/projects/teaser/bits/contact.',
       ]);
     },
     ls(args) {
@@ -205,7 +221,7 @@
       try {
         const response = await fetch('/' + args[0], { credentials: 'same-origin' });
         lines((await response.text()).trimEnd().split('\n'));
-        // fetching humans.txt is what earns the star, server side
+        // fetching humans.txt is what sets the bit, server side
         if (args[0] === 'humans.txt' && !have.has('humans')) celebrate('humans', 'Credits');
       } catch {
         print(`cat: ${args[0]}: Network is unreachable`, 't-err');
@@ -219,9 +235,11 @@
     history: () => cmdHistory.forEach((cmd, i) => print(`${String(i + 1).padStart(4)}  ${cmd}`)),
     clear: () => { out.textContent = ''; },
     exit: () => closeTerminal(),
-    stars() {
-      print(`${have.size}/${order.length} stars found.`, 't-star');
-      print('Hints live on /stars/. Type `cd stars` to go there.');
+    bits() {
+      const value = order.reduce((sum, key, i) => sum + (have.has(key) ? 2 ** i : 0), 0);
+      const binary = value.toString(2).padStart(order.length, '0').replace(/(....)(?=.)/g, '$1 ');
+      print(`0x${value.toString(16).toUpperCase().padStart(3, '0')}  ${binary}`, 't-bit');
+      print(`${have.size} of ${order.length} bits set. Hints are on /bits/, \`cd bits\` goes there.`);
     },
     contrast() {
       const on = body.classList.toggle('hc');
@@ -232,13 +250,13 @@
       if (args.join(' ') === 'make me a sandwich') print('Okay.', 't-ok');
       else print('visitor is not in the sudoers file. This incident will be reported.', 't-err');
       const result = await claim('sudo');
-      if (result.new) print('...although. Reported to whom? Have a star.', 't-star');
+      if (result.new) print('...although. Reported to whom? Have a bit instead.', 't-bit');
     },
     async unlock(args) {
       if (!args[0]) return print('unlock: missing code. Codes are found outside the browser.', 't-err');
       const result = await claim('curl', { code: args[0] });
       if (!result.ok) return print(`unlock: ${result.error || 'invalid code'}`, 't-err');
-      print(result.new ? 'Code accepted.' : 'Already unlocked.', result.new ? 't-star' : 't-ok');
+      print(result.new ? 'Code accepted.' : 'Already unlocked.', result.new ? 't-bit' : 't-ok');
     },
     make(args) {
       const what = args.join(' ');
@@ -262,8 +280,8 @@
     curl: () => print("Not from in here. Try it from your real terminal: curl " + location.host, 't-ok'),
     ssh: () => print('ssh: connect to host foth.dev port 22: Connection refused. Good.', 't-err'),
     git(args) {
-      const sha = document.querySelector('.site-footer a[href*="/commit/"]')?.textContent || 'dev';
-      if (args[0] === 'log') return lines([`commit ${sha}`, 'Author: Nico Foth', '', '    redesign: make it look like a terminal at night']);
+      const sha = document.querySelector('.footer a[href*="/commit/"]')?.textContent || 'dev';
+      if (args[0] === 'log') return lines([`commit ${sha}`, 'Author: Nico Foth', '', '    redesign: a cockpit display at night']);
       if (args[0] === 'blame') return print('It was me. It is always me.');
       print('git: try `git log`');
     },
@@ -315,11 +333,14 @@
     }
   }
 
+  const toggles = document.querySelectorAll('[data-open-terminal]');
+
   function openTerminal(command) {
     term.hidden = false;
+    toggles.forEach((el) => el.setAttribute('aria-expanded', 'true'));
     if (!greeted) {
       greeted = true;
-      print(`foth.dev shell. ${have.size}/${order.length} stars found. Type \`help\` to get started.`, 'dim');
+      print(`foth.dev shell. ${have.size} of ${order.length} bits set. Type \`help\` to get started.`, 't-cmd');
     }
     input.focus();
     if (command) run(command);
@@ -327,6 +348,7 @@
 
   function closeTerminal() {
     term.hidden = true;
+    toggles.forEach((el) => el.setAttribute('aria-expanded', 'false'));
     input.blur();
     if (location.hash === '#terminal') history.replaceState(null, '', location.pathname + location.search);
   }
@@ -357,9 +379,13 @@
 
   out.addEventListener('click', () => { if (!window.getSelection()?.toString()) input.focus(); });
 
-  document.querySelectorAll('[data-open-terminal]').forEach((link) => {
-    link.addEventListener('click', (event) => { event.preventDefault(); openTerminal(); });
+  toggles.forEach((el) => {
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (term.hidden) openTerminal(); else closeTerminal();
+    });
   });
+  term.querySelector('[data-close-terminal]').addEventListener('click', closeTerminal);
   if (location.hash === '#terminal') openTerminal();
 
   /* ---------------------------------------------------------- keyboard */
@@ -389,7 +415,7 @@
   /* ------------------------------------------------- for the curious */
 
   console.log(
-    '%c*%c  Hello, fellow developer.\n   There are ' + order.length + ' stars on this site. Some of them are only reachable from here,\n   or from your own terminal. Press : for a shell.',
-    'color:#ffff66;text-shadow:0 0 5px #ffff66;font-size:16px', 'color:#00cc00',
+    '%c●%c  Hello, fellow developer.\n   There are ' + order.length + ' bits hidden on this site. Some of them are only reachable from here,\n   or from your own terminal. Press : for a shell.',
+    'color:#FFB23F;text-shadow:0 0 6px #FFB23F;font-size:16px', 'color:#4FD8EB',
   );
 })();

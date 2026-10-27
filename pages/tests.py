@@ -35,9 +35,9 @@ class PageTests(TestCase):
             resolve(path)
 
     @override_settings(DEBUG=False)
-    def test_404_awards_a_star(self):
+    def test_404_sets_a_bit(self):
         response = self.client.get('/definitely/not/here/')
-        self.assertContains(response, 'Off The Map', status_code=404)
+        self.assertContains(response, 'No such file or directory', status_code=404)
         self.assertIn('lost', self.client.session['bits'])
 
 
