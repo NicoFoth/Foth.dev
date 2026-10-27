@@ -86,5 +86,5 @@ def select_players(request):
             team_a, team_b = generate({player.name: latest.get(player.pk, 1500) for player in players})
             return render(request, "csgo/show_teams.html", {"team_a": team_a, "team_b": team_b})
         messages.warning(request, "Bitte wählen Sie mindestens 4 Spieler aus!")
-        return redirect("cs_select_players")
+        return redirect("cs:select_players")
     return render(request, "csgo/select_players.html", {"selectform": form})

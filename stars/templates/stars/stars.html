@@ -3,7 +3,7 @@
 {% block content %}
 <article>
   <h2>--- Stars ---</h2>
-  <p>There are <em>{{ star_total }} stars</em> hidden around this site. Each one you find lights up a star in the sky on the <a href="{% url 'show_landing_page' %}">[front page]</a>. Progress is kept in a cookie on your machine and nowhere else.</p>
+  <p>There are <em>{{ star_total }} stars</em> hidden around this site. Each one you find lights up a star in the sky on the <a href="{% url 'pages:home' %}">[front page]</a>. Progress is kept in a cookie on your machine and nowhere else.</p>
   <p>You have found <span class="gold glow">{{ star_count }}</span> of them{% if star_count == star_total %}. All of them, actually. <em>Respect.</em>{% else %} so far.{% endif %}</p>
 </article>
 <div class="stars-list board" role="list">

@@ -36,14 +36,14 @@ jnz b -3
 {% if part2 %}
 <p>Your puzzle answer was <code>{{ answer2 }}</code>.</p>
 <p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: <span class="gold glow">**</span></p>
-<p>At this point, all that is left is for you to <a href="{% url 'show_landing_page' %}">[admire the sky]</a>, or go and <a href="{% url 'stars_page' %}">[look for more stars]</a>.</p>
-<p>If you still want to see it, you can <a href="{% url 'puzzle_input' %}" target="_blank">[get your puzzle input]</a>.</p>
+<p>At this point, all that is left is for you to <a href="{% url 'pages:home' %}">[admire the sky]</a>, or go and <a href="{% url 'stars:index' %}">[look for more stars]</a>.</p>
+<p>If you still want to see it, you can <a href="{% url 'puzzle:input' %}" target="_blank">[get your puzzle input]</a>.</p>
 {% else %}
-<form method="post" action="{% url 'puzzle_answer' %}" class="answer-form">
+<form method="post" action="{% url 'puzzle:answer' %}" class="answer-form">
   {% csrf_token %}
   <input type="hidden" name="level" value="{% if part1 %}2{% else %}1{% endif %}">
-  <p>{% if not part1 %}To begin, <a href="{% url 'puzzle_input' %}" target="_blank">[get your puzzle input]</a>.</p>
-  <p>{% else %}Your puzzle input is still <a href="{% url 'puzzle_input' %}" target="_blank">[here]</a>.</p>
+  <p>{% if not part1 %}To begin, <a href="{% url 'puzzle:input' %}" target="_blank">[get your puzzle input]</a>.</p>
+  <p>{% else %}Your puzzle input is still <a href="{% url 'puzzle:input' %}" target="_blank">[here]</a>.</p>
   <p>{% endif %}<label for="answer">Answer:</label> <input type="text" name="answer" id="answer" autocomplete="off" inputmode="numeric"> <input type="submit" value="[Submit]"></p>
 </form>
 {% endif %}

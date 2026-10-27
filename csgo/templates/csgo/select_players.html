@@ -12,6 +12,6 @@
   {% endfor %}
   </div>
   {% for error in selectform.players.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-  <p><input type="submit" value="[Generieren]"> <a href="{% url 'cs_overview' %}">[Back]</a></p>
+  <p><input type="submit" value="[Generieren]"> <a href="{% url 'cs:index' %}">[Back]</a></p>
 </form>
 {% endblock content %}
