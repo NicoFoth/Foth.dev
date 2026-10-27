@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Poker - Foth.dev{% endblock %}
 {% block content %}
-<h1>Poker</h1>
-<p class="lead">Chip balance across our home games, per season. Bragging rights only; no real money changes hands. Probably.</p>
+<header class="name">
+  <h1>poker</h1>
+  <p>Chip balance across our home games, per season. Bragging rights only; no real money changes hands. Probably.</p>
+</header>
+<h2>Seasons</h2>
 {% for season, players in seasons_data.items %}
 <div class="table-wrap">
 <table>

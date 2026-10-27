@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Contact - Foth.dev{% endblock %}
 {% block content %}
-<h1>Contact</h1>
-<p class="lead">Found a bug, have a neater solution to the brain teaser, or want to talk about a project? Leave a message. It lands in a database table that I actually read.</p>
+<header class="name">
+  <h1>contact</h1>
+  <p>Found a bug, have a neater solution to the brain teaser, or want to talk about a project? Leave a message. It lands in a database table that I actually read.</p>
+</header>
+<h2>Usage</h2>
 <form method="post" novalidate>
   {% csrf_token %}
   {% for error in form.non_field_errors %}<p class="form-error" role="alert">{{ error }}</p>{% endfor %}

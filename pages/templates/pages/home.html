@@ -1,36 +1,36 @@
 {% extends "base.html" %}
 {% block main_class %}column home{% endblock %}
 {% block content %}
-<section class="hero">
-  <div class="display">{{ panel }}</div>
+<div class="display">{{ panel }}</div>
+
+<header class="name">
   <h1>Nico Foth</h1>
-  <p class="lead">Software engineer at Lufthansa, studying applied computer science.</p>
-</section>
+  <p>software engineer at Lufthansa, studying applied computer science</p>
+</header>
 
-<div class="intro">
-  <p>Welcome to my personal website! My name is Nico Foth, and I am a Software Engineer at Lufthansa.
-  I am also currently studying applied computer science, which I find to be a fascinating and ever-evolving field.</p>
-  <p>In my free time, I enjoy playing video games and watching movies. However, what really excites me is working on software projects in my private time.
-  I love the creative process of developing something from scratch, and I find it incredibly rewarding to see my ideas come to life in code.</p>
-  <p>On this website, you will find information about my <a href="{% url 'pages:about' %}">personal, as well as professional background</a>.
-  You will also find examples of my personal <a href="{% url 'projects:index' %}">projects</a>, which I have worked on in my spare time.
-  These projects are a true reflection of my passion for software development, and I am excited to share them with you.</p>
-</div>
+<h2>Synopsis</h2>
+<dl class="tp">
+  <dt><kbd>g</kbd> <kbd>1</kbd>&ndash;<kbd>7</kbd></dt><dd>switch window, as in the bar at the top</dd>
+  <dt><kbd>:</kbd></dt><dd>open a shell; <a href="#terminal" data-open-terminal>or click here</a></dd>
+  <dt><kbd>?</kbd></dt><dd>list what the shell knows</dd>
+</dl>
 
-<nav class="index" aria-labelledby="index-title">
-  <h2 id="index-title">Pages</h2>
-  <ul>
-    {% for page in pages %}
-    <li><a href="{{ page.url }}"{% if page.visited %} class="visited"{% endif %}>
-      <span class="index-name">{{ page.name }}</span>
-      <span class="index-text">{{ page.text }}</span>
-      {% if page.visited %}<span class="index-seen"><span aria-hidden="true">✓</span><span class="visually-hidden">(visited)</span></span>{% endif %}
-    </a></li>
-    {% endfor %}
-    <li><a href="#terminal" data-open-terminal>
-      <span class="index-name">Terminal</span>
-      <span class="index-text">A small shell. Press <kbd>:</kbd> anywhere to open it.</span>
-    </a></li>
-  </ul>
-</nav>
+<h2>Description</h2>
+<p>I write software at Lufthansa and study applied computer science on the side.
+In my spare time I build things from scratch, play video games and watch movies.
+This site is one of the things. More in <a class="xref" href="{% url 'pages:about' %}">about(7)</a> and <a class="xref" href="{% url 'projects:index' %}">projects(1)</a>.</p>
+
+<h2 id="files">Files</h2>
+<dl class="tp files" aria-labelledby="files">
+  {% for page in pages %}
+  <dt><a href="{{ page.url }}">~{{ page.url }}</a></dt>
+  <dd>{{ page.text }}{% if page.visited %} <span class="seen" title="visited"><span aria-hidden="true">[seen]</span><span class="visually-hidden">(visited)</span></span>{% endif %}</dd>
+  {% endfor %}
+</dl>
+
+<h2>Bugs</h2>
+<p>One LED on the panel above is loose.</p>
+
+<h2>See also</h2>
+<p><span class="xref">curl(1)</span>, <a href="{% url 'pages:humans' %}">humans.txt</a>, <a href="https://github.com/NicoFoth" rel="me noopener">github.com/NicoFoth</a></p>
 {% endblock %}

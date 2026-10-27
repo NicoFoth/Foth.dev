@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}{{ match.map.name }} {{ match.endstate }} - CS - Foth.dev{% endblock %}
 {% block content %}
-<h1>{{ match.map.name }}, {{ match.endstate }}</h1>
-<p class="lead"><span class="dim">{{ match.date|date:"Y-m-d H:i" }}, {{ match.mode.name }}.</span> <a href="{% url 'cs:season' season_id=match.season.id %}">{{ match.season.name }}</a></p>
+<header class="name">
+  <h1>{{ match.map.name }}, {{ match.endstate }}</h1>
+  <p>{{ match.date|date:"Y-m-d H:i" }}, {{ match.mode.name }}. <a href="{% url 'cs:season' season_id=match.season.id %}">{{ match.season.name }}</a></p>
+</header>
+<h2>Scoreboard</h2>
 <div class="table-wrap" role="region" aria-label="Scoreboard" tabindex="0">
 <table>
-  <caption>Scoreboard</caption>
+  <caption class="visually-hidden">Scoreboard</caption>
   <thead><tr>
     <th scope="col">Player</th>
     <th class="num" scope="col"><abbr title="Kills">K</abbr></th>

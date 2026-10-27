@@ -2,8 +2,11 @@
 {% load csgo_extras %}
 {% block title %}CS rankings - Foth.dev{% endblock %}
 {% block content %}
-<h1>CS rankings</h1>
-<p class="lead">Elo ladder for our Counter-Strike evenings. Ten matches in a season and you are ranked; until then, you are just a number. Open a season for its matches, or a player for their stats.</p>
+<header class="name">
+  <h1>cs</h1>
+  <p>Elo ladder for our Counter-Strike evenings. Ten matches in a season and you are ranked; until then, you are just a number. Open a season for its matches, or a player for their stats.</p>
+</header>
+<h2>Seasons</h2>
 <div class="actions"><a class="button" href="{% url 'cs:select_players' %}">Generate balanced teams</a></div>
 {% for season, elos in seasons.items %}
 <div class="table-wrap">

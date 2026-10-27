@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Bits - Foth.dev{% endblock %}
 {% block content %}
-<h1>Bits</h1>
-<p class="lead">This site has a 12-bit register, and each bit is hidden somewhere. Find one and it is set, here and in the status line at the bottom of every page. Your progress lives in a cookie on your machine and nowhere else.</p>
+<header class="name">
+  <h1>bits</h1>
+  <p>This site has a 12-bit register, and each bit is hidden somewhere. Find one and it is set, here and in the status line at the bottom of every page. Your progress lives in a cookie on your machine and nowhere else.</p>
+</header>
 
+<h2>Register</h2>
 <div class="register-big" aria-hidden="true">
   {% for i, bit, found in rows reversed %}<span class="cell"><i class="led{% if found %} on{% endif %}"></i><span>{{ i }}</span></span>{% endfor %}
 </div>
 <p class="register-value"><span class="hex">{{ hex }}</span> <span class="dim">0b {{ nibbles|join:" " }}</span> <span>{{ bit_count }} of {{ bit_total }} set{% if bit_count == bit_total %}. All of them. Respect.{% endif %}</span></p>
 
+<h2>Bits</h2>
 <ul class="bit-list">
 {% for i, bit, found in rows %}
   <li{% if found %} class="found"{% endif %}>

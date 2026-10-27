@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Log in - Foth.dev{% endblock %}
 {% block content %}
-<h1>Log in</h1>
-<p class="lead">This is the door to the admin area. If you're not me, the brain teaser is more fun.</p>
+<header class="name">
+  <h1>login</h1>
+  <p>This is the door to the admin area. If you're not me, the brain teaser is more fun.</p>
+</header>
+<h2>Usage</h2>
 <form method="post">
   {% csrf_token %}
   {% for error in form.non_field_errors %}<p class="form-error" role="alert">{{ error }}</p>{% endfor %}
