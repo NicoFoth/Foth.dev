@@ -3,8 +3,10 @@
 {% block content %}
 <header class="name">
   <h1>teams</h1>
-  <p>Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
+  <p>split players into two even teams</p>
 </header>
+<h2>Description</h2>
+<p>Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
 <h2>Players</h2>
 <form method="post">
   {% csrf_token %}

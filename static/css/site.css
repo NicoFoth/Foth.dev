@@ -194,8 +194,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 .man-head { margin-bottom: 2.5rem; }
 
 /* Everything is indented except the section headings, which sit at the margin. */
-.column > :not(article, h2, .man-head, .name, .display),
-.column > article > :not(h2, .name) { margin-left: var(--indent); }
+.column > :not(article, h1, h2, .man-head, .name, .display),
+.column > article > :not(h1, h2, .name) { margin-left: var(--indent); }
 
 .column > h2, .column > article > h2, .name::before {
   display: block;

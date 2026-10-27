@@ -4,10 +4,12 @@
 {% block content %}
 <header class="name">
   <h1>cs</h1>
-  <p>Elo ladder for our Counter-Strike evenings. Ten matches in a season and you are ranked; until then, you are just a number. Open a season for its matches, or a player for their stats.</p>
+  <p>Elo ladder for our Counter-Strike evenings</p>
 </header>
-<h2>Seasons</h2>
+<h2>Description</h2>
+<p>Ten matches in a season and you are ranked; until then, you are just a number. Open a season for its matches, or a player for their stats.</p>
 <div class="actions"><a class="button" href="{% url 'cs:select_players' %}">Generate balanced teams</a></div>
+<h2>Seasons</h2>
 {% for season, elos in seasons.items %}
 <div class="table-wrap">
 <table>
