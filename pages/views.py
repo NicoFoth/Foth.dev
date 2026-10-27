@@ -76,7 +76,7 @@ def humans_txt(request):
 /* SITE */
     Standards: HTML, CSS, a little vanilla JS
     Components: Django {v['django']}, Python {v['python']}, SQLite {v['sqlite']}
-    Fonts: B612, made for Airbus cockpit displays, and IBM Plex Mono (both self-hosted)
+    Font: IBM Plex Mono, self-hosted
     Build step: none
 
     Reading this set one of the hidden bits. Check {request.build_absolute_uri(reverse('bits:index'))}

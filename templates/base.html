@@ -9,8 +9,8 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 <title>{% block title %}Foth.dev{% endblock %}</title>
 <link rel="icon" href="{% static 'favicon.ico' %}">
-<link rel="preload" href="{% static 'fonts/b612-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{% static 'fonts/b612-latin-700-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'fonts/ibm-plex-mono-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'fonts/ibm-plex-mono-latin-600-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{% static 'css/site.css' %}?v={{ build_sha }}">
 <script src="{% static 'js/site.js' %}?v={{ build_sha }}" defer></script>
 </head><!--
@@ -25,8 +25,8 @@
     Oh, hello there, fellow source reader.
 
     No framework, no bundler, no tracking. Just Django, one stylesheet
-    and a bit of vanilla JS. The type is B612, which Airbus had made for
-    cockpit displays, with IBM Plex Mono for code. The humans behind this
+    and a bit of vanilla JS. Everything is set in IBM Plex Mono, one
+    size, like the terminal it pretends to be. The humans behind this
     are listed in /humans.txt.
 
     Twelve bits are hidden on this site. /robots.txt is a good start.
