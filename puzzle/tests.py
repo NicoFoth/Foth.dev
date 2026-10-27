@@ -25,30 +25,30 @@ class ColdBootMathTests(TestCase):
 
 class ColdBootViewTests(TestCase):
     def seed(self):
-        self.client.get(reverse('puzzle_day'))
+        self.client.get(reverse('puzzle:day'))
         return cold_boot.params(self.client.session[cold_boot.SESSION_KEY])
 
     def test_input_is_plain_text_and_stable(self):
-        first = self.client.get(reverse('puzzle_input'))
+        first = self.client.get(reverse('puzzle:input'))
         self.assertEqual(first['Content-Type'], 'text/plain; charset=utf-8')
-        self.assertEqual(first.content, self.client.get(reverse('puzzle_input')).content)
+        self.assertEqual(first.content, self.client.get(reverse('puzzle:input')).content)
 
     def test_wrong_then_right(self):
         p = self.seed()
         right = cold_boot.answer(p, 1)
-        resp = self.client.post(reverse('puzzle_answer'), {'level': 1, 'answer': right + 1})
+        resp = self.client.post(reverse('puzzle:answer'), {'level': 1, 'answer': right + 1})
         self.assertContains(resp, 'too high')
-        resp = self.client.post(reverse('puzzle_answer'), {'level': 1, 'answer': right})
+        resp = self.client.post(reverse('puzzle:answer'), {'level': 1, 'answer': right})
         self.assertContains(resp, 'wait')  # cooldown after a wrong answer
 
         later = time.time() + 60
         with mock.patch('puzzle.views.time.time', return_value=later):
-            resp = self.client.post(reverse('puzzle_answer'), {'level': 1, 'answer': right})
+            resp = self.client.post(reverse('puzzle:answer'), {'level': 1, 'answer': right})
         self.assertContains(resp, 'the right answer')
         self.assertIn('puzzle1', self.client.session['stars'])
 
     def test_part_two_locked_until_part_one(self):
         p = self.seed()
-        resp = self.client.post(reverse('puzzle_answer'), {'level': 2, 'answer': cold_boot.answer(p, 2)})
+        resp = self.client.post(reverse('puzzle:answer'), {'level': 2, 'answer': cold_boot.answer(p, 2)})
         self.assertNotIn('puzzle2', self.client.session.get('stars', []))
         self.assertEqual(resp.status_code, 302)

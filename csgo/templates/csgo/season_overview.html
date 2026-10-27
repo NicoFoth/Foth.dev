@@ -4,22 +4,22 @@
 {% block content %}
 <article>
   <h2>--- {{ season.name }} ---</h2>
-  <p><span class="dim">{{ season.startDate|date:"Y-m-d" }} .. {{ season.endDate|date:"Y-m-d" }}</span> <a href="{% url 'cs_overview' %}">[All seasons]</a></p>
+  <p><span class="dim">{{ season.startDate|date:"Y-m-d" }} .. {{ season.endDate|date:"Y-m-d" }}</span> <a href="{% url 'cs:index' %}">[All seasons]</a></p>
 </article>
 <div class="board">
 <div class="board-row board-head">Ranked <span class="dim">({{ ranked_after }}+ matches)</span></div>
-{% for row in ranked_players %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs_player_profile' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</div>
+{% for row in ranked_players %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</div>
 {% empty %}<div class="board-row dim">  Nobody has played {{ ranked_after }} matches yet.</div>
 {% endfor %}</div>
 {% if unranked_players %}
 <div class="board">
 <div class="board-row board-head">Unranked</div>
-{% for row in unranked_players %}<div class="board-row"><span class="board-rank">  -)</span> <span class="board-score dim">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs_player_profile' player_id=row.player.id %}">{{ row.player.name }}</a></div>
+{% for row in unranked_players %}<div class="board-row"><span class="board-rank">  -)</span> <span class="board-score dim">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a></div>
 {% endfor %}</div>
 {% endif %}
 <div class="board">
 <div class="board-row board-head">Matches</div>
-{% for match in matches %}<a class="board-row" href="{% url 'cs_match_overview' match_id=match.id %}"><span class="dim">{{ match.date|date:"Y-m-d H:i" }}</span>  {{ match.map.name|ljust:"10" }} <span class="white">{{ match.endstate|rjust:"5" }}</span>  <span class="dim">{{ match.mode.name }}</span></a>
+{% for match in matches %}<a class="board-row" href="{% url 'cs:match' match_id=match.id %}"><span class="dim">{{ match.date|date:"Y-m-d H:i" }}</span>  {{ match.map.name|ljust:"10" }} <span class="white">{{ match.endstate|rjust:"5" }}</span>  <span class="dim">{{ match.mode.name }}</span></a>
 {% empty %}<div class="board-row dim">  No matches yet.</div>
 {% endfor %}</div>
 {% endblock %}

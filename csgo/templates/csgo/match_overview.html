@@ -3,13 +3,13 @@
 {% block content %}
 <article>
   <h2>--- {{ match.map.name }}: {{ match.endstate }} ---</h2>
-  <p><span class="dim">{{ match.date|date:"Y-m-d H:i" }}, {{ match.mode.name }},</span> <a href="{% url 'cs_season_overview' season_id=match.season.id %}">[{{ match.season.name }}]</a></p>
+  <p><span class="dim">{{ match.date|date:"Y-m-d H:i" }}, {{ match.mode.name }},</span> <a href="{% url 'cs:season' season_id=match.season.id %}">[{{ match.season.name }}]</a></p>
 </article>
 <div class="board board-wrap">
 <div class="board-row board-head">{{ "Player"|ljust:"16" }}    K    A    D   HS   EF    UD   ADR</div>
-{% for p in winners %}<div class="board-row board-win"><a class="board-name" href="{% url 'cs_player_profile' player_id=p.player.id %}">{{ p.player.name|ljust:"16" }}</a> {{ p.kills|rjust:"4" }} {{ p.assists|rjust:"4" }} {{ p.deaths|rjust:"4" }} {{ p.headshotKills|rjust:"4" }} {{ p.enemiesFlashed|rjust:"4" }} {{ p.utilityDamage|rjust:"5" }} {{ p.adr|rjust:"5" }}</div>
+{% for p in winners %}<div class="board-row board-win"><a class="board-name" href="{% url 'cs:player' player_id=p.player.id %}">{{ p.player.name|ljust:"16" }}</a> {{ p.kills|rjust:"4" }} {{ p.assists|rjust:"4" }} {{ p.deaths|rjust:"4" }} {{ p.headshotKills|rjust:"4" }} {{ p.enemiesFlashed|rjust:"4" }} {{ p.utilityDamage|rjust:"5" }} {{ p.adr|rjust:"5" }}</div>
 {% endfor %}<div class="board-row faint">-------------------------------------------------------</div>
-{% for p in losers %}<div class="board-row board-loss"><a class="board-name" href="{% url 'cs_player_profile' player_id=p.player.id %}">{{ p.player.name|ljust:"16" }}</a> {{ p.kills|rjust:"4" }} {{ p.assists|rjust:"4" }} {{ p.deaths|rjust:"4" }} {{ p.headshotKills|rjust:"4" }} {{ p.enemiesFlashed|rjust:"4" }} {{ p.utilityDamage|rjust:"5" }} {{ p.adr|rjust:"5" }}</div>
+{% for p in losers %}<div class="board-row board-loss"><a class="board-name" href="{% url 'cs:player' player_id=p.player.id %}">{{ p.player.name|ljust:"16" }}</a> {{ p.kills|rjust:"4" }} {{ p.assists|rjust:"4" }} {{ p.deaths|rjust:"4" }} {{ p.headshotKills|rjust:"4" }} {{ p.enemiesFlashed|rjust:"4" }} {{ p.utilityDamage|rjust:"5" }} {{ p.adr|rjust:"5" }}</div>
 {% endfor %}</div>
 <p class="quiet">Winners on top. HS = headshot kills, EF = enemies flashed, UD = utility damage.</p>
 {% endblock %}

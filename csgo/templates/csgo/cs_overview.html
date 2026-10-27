@@ -8,12 +8,12 @@
 </article>
 {% for season, elos in seasons.items %}
 <div class="board">
-<div class="board-row"><a href="{% url 'cs_season_overview' season_id=season.id %}" class="white">{{ season.name }}</a> <span class="dim">{{ season.startDate|date:"Y-m-d" }} .. {{ season.endDate|date:"Y-m-d" }}</span></div>
-{% for row in elos %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs_player_profile' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</div>
+<div class="board-row"><a href="{% url 'cs:season' season_id=season.id %}" class="white">{{ season.name }}</a> <span class="dim">{{ season.startDate|date:"Y-m-d" }} .. {{ season.endDate|date:"Y-m-d" }}</span></div>
+{% for row in elos %}<div class="board-row{% if forloop.counter <= 3 %} board-{{ forloop.counter }}{% endif %}"><span class="board-rank">{{ forloop.counter|stringformat:"3d" }})</span> <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>  <a class="board-name" href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</div>
 {% empty %}<div class="board-row dim">  (no players yet)</div>
 {% endfor %}</div>
 {% empty %}
 <p class="dim">No seasons yet.</p>
 {% endfor %}
-<p><a href="{% url 'cs_select_players' %}">[Generate balanced teams]</a></p>
+<p><a href="{% url 'cs:select_players' %}">[Generate balanced teams]</a></p>
 {% endblock %}

@@ -4,22 +4,22 @@
 {% block content %}
 <article>
   <h2>--- {{ player.name }} ---</h2>
-  <p><a href="{% url 'cs_overview' %}">[All seasons]</a></p>
+  <p><a href="{% url 'cs:index' %}">[All seasons]</a></p>
 </article>
 <div class="board board-wrap">
 <div class="board-row board-head">{{ "Season"|ljust:"16" }} Games  Wins    K    D   K/D    A   HS   ADR   EF    UD</div>
 <div class="board-row"><span class="white">{{ "All time"|ljust:"16" }}</span> {{ player_stats.matchCount|rjust:"5" }} {{ player_stats.winCount|rjust:"5" }} {{ player_stats.kills|default:0|rjust:"4" }} {{ player_stats.deaths|default:0|rjust:"4" }} <span class="white">{{ player_stats.kd|stringformat:"5.2f" }}</span> {{ player_stats.assists|default:0|rjust:"4" }} {{ player_stats.headshots|default:0|rjust:"4" }} {{ player_stats.adr|rjust:"5" }} {{ player_stats.enemiesFlashed|default:0|rjust:"4" }} {{ player_stats.utilityDamage|default:0|rjust:"5" }}</div>
-{% for s in player_seasons %}<a class="board-row" href="{% url 'cs_season_overview' season_id=s.match__season %}">{{ s.match__season__name|ljust:"16" }} {{ s.matchCount|rjust:"5" }} {{ s.winCount|rjust:"5" }} {{ s.kills|rjust:"4" }} {{ s.deaths|rjust:"4" }} {{ s.kd|stringformat:"5.2f" }} {{ s.assists|rjust:"4" }} {{ s.headshots|rjust:"4" }} {{ s.adr|rjust:"5" }} {{ s.enemiesFlashed|rjust:"4" }} {{ s.utilityDamage|rjust:"5" }}</a>
+{% for s in player_seasons %}<a class="board-row" href="{% url 'cs:season' season_id=s.match__season %}">{{ s.match__season__name|ljust:"16" }} {{ s.matchCount|rjust:"5" }} {{ s.winCount|rjust:"5" }} {{ s.kills|rjust:"4" }} {{ s.deaths|rjust:"4" }} {{ s.kd|stringformat:"5.2f" }} {{ s.assists|rjust:"4" }} {{ s.headshots|rjust:"4" }} {{ s.adr|rjust:"5" }} {{ s.enemiesFlashed|rjust:"4" }} {{ s.utilityDamage|rjust:"5" }}</a>
 {% endfor %}</div>
 {% if season_elos %}
 <div class="board">
 <div class="board-row board-head">Elo per season</div>
-{% for row in season_elos %}<a class="board-row" href="{% url 'cs_season_overview' season_id=row.season.id %}">{{ row.season.name|ljust:"16" }} <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>{% rank_badge row.elo %}</a>
+{% for row in season_elos %}<a class="board-row" href="{% url 'cs:season' season_id=row.season.id %}">{{ row.season.name|ljust:"16" }} <span class="board-score">{{ row.elo|stringformat:"5d" }}</span>{% rank_badge row.elo %}</a>
 {% endfor %}</div>
 {% endif %}
 <div class="board">
 <div class="board-row board-head">Matches</div>
-{% for pm in player_matches %}<a class="board-row" href="{% url 'cs_match_overview' match_id=pm.match.id %}"><span class="dim">{{ pm.match.date|date:"Y-m-d H:i" }}</span>  {{ pm.match.map.name|ljust:"10" }} {% if pm.win %}<span class="board-win">W</span>{% else %}<span class="board-loss">L</span>{% endif %}  {{ pm.kills }}/{{ pm.deaths }}/{{ pm.assists }}  <span class="dim">{% if pm.eloChange >= 0 %}+{% endif %}{{ pm.eloChange|floatformat:0 }}</span></a>
+{% for pm in player_matches %}<a class="board-row" href="{% url 'cs:match' match_id=pm.match.id %}"><span class="dim">{{ pm.match.date|date:"Y-m-d H:i" }}</span>  {{ pm.match.map.name|ljust:"10" }} {% if pm.win %}<span class="board-win">W</span>{% else %}<span class="board-loss">L</span>{% endif %}  {{ pm.kills }}/{{ pm.deaths }}/{{ pm.assists }}  <span class="dim">{% if pm.eloChange >= 0 %}+{% endif %}{{ pm.eloChange|floatformat:0 }}</span></a>
 {% empty %}<div class="board-row dim">  No matches yet.</div>
 {% endfor %}</div>
 {% endblock %}

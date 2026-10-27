@@ -32,15 +32,8 @@ BY_KEY = {star.key: star for star in STARS}
 # Stars that are discovered in the browser and reported back by site.js.
 CLIENT_CLAIMABLE = {'sudo', 'konami', 'moon', 'owl'}
 
-# url_name -> short label; visiting all of them earns the "explorer" star.
+# Visiting all of these (by view name) earns the "explorer" star.
 MENU_PAGES = {
-    'show_landing_page': 'home',
-    'show_about_page': 'about',
-    'show_projects': 'projects',
-    'show_contact_page': 'contact',
-    'puzzle_day': 'puzzle',
-    'stars_page': 'stars',
-    'cs_overview': 'cs',
-    'show_poker_page': 'poker',
-    'show_legal_page': 'legal',
+    'pages:home', 'pages:about', 'pages:contact', 'pages:legal',
+    'projects:index', 'puzzle:day', 'stars:index', 'cs:index', 'poker:index',
 }

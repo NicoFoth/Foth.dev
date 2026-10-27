@@ -10,8 +10,8 @@
 <title>{% block title %}Foth.dev{% endblock %}</title>
 <link rel="icon" href="{% static 'favicon.ico' %}">
 <link rel="preload" href="{% static 'fonts/source-code-pro-latin-300.woff2' %}" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{% static 'css/site.css' %}">
-<script src="{% static 'js/site.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'css/site.css' %}?v={{ build_sha }}">
+<script src="{% static 'js/site.js' %}?v={{ build_sha }}" defer></script>
 </head><!--
 
     ███████╗ ██████╗ ████████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗
@@ -28,27 +28,27 @@
     /humans.txt -- go say hi.
 
 -->
-<body data-stars="{{ star_keys|join:',' }}" data-star-order="{{ star_order|join:',' }}" data-claim-url="{% url 'stars_claim' %}">
+<body data-stars="{{ star_keys|join:',' }}" data-star-order="{{ star_order|join:',' }}" data-claim-url="{% url 'stars:claim' %}">
 <header class="site-header">
-  <h1 class="title-global"><a href="{% url 'show_landing_page' %}">Foth.dev</a></h1>
+  <h1 class="title-global"><a href="{% url 'pages:home' %}">Foth.dev</a></h1>
   <nav class="nav-main" aria-label="Main">
     <ul>
-      <li><a href="{% url 'show_about_page' %}"{% if current == 'show_about_page' %} aria-current="page"{% endif %}>[About]</a></li>
-      <li><a href="{% url 'show_projects' %}"{% if current == 'show_projects' or current == 'show_project' %} aria-current="page"{% endif %}>[Projects]</a></li>
-      <li><a href="{% url 'show_contact_page' %}"{% if current == 'show_contact_page' %} aria-current="page"{% endif %}>[Contact]</a></li>
+      <li><a href="{% url 'pages:about' %}"{% if current == 'pages:about' %} aria-current="page"{% endif %}>[About]</a></li>
+      <li><a href="{% url 'projects:index' %}"{% if section == 'projects' %} aria-current="page"{% endif %}>[Projects]</a></li>
+      <li><a href="{% url 'pages:contact' %}"{% if current == 'pages:contact' %} aria-current="page"{% endif %}>[Contact]</a></li>
       <li><a href="https://github.com/NicoFoth" rel="me noopener">[GitHub]</a></li>
     </ul>
   </nav>
   <div class="user">
-    {% if user.is_authenticated %}<span class="dim">{{ user.get_username }}</span> {% endif %}<a href="{% url 'stars_page' %}" class="star-count" title="Stars collected"><span data-star-count>{{ star_count }}</span>*</a>
+    {% if user.is_authenticated %}<span class="dim">{{ user.get_username }}</span> {% endif %}<a href="{% url 'stars:index' %}" class="star-count" title="Stars collected"><span data-star-count>{{ star_count }}</span>*</a>
   </div>
   <h1 class="title-event"><span class="title-event-wrap">{{ subtitle.0 }}</span><span class="title-bright">nico</span><span class="title-event-wrap">{{ subtitle.1 }}</span></h1>
   <nav class="nav-sub" aria-label="More">
     <ul>
-      <li><a href="{% url 'puzzle_day' %}"{% if current == 'puzzle_day' %} aria-current="page"{% endif %}>[Puzzle]</a></li>
-      <li><a href="{% url 'stars_page' %}"{% if current == 'stars_page' %} aria-current="page"{% endif %}>[Stars]</a></li>
-      <li><a href="{% url 'cs_overview' %}"{% if current == 'cs_overview' %} aria-current="page"{% endif %}>[CS]</a></li>
-      <li><a href="{% url 'show_poker_page' %}"{% if current == 'show_poker_page' %} aria-current="page"{% endif %}>[Poker]</a></li>
+      <li><a href="{% url 'puzzle:day' %}"{% if section == 'puzzle' %} aria-current="page"{% endif %}>[Puzzle]</a></li>
+      <li><a href="{% url 'stars:index' %}"{% if current == 'stars:index' %} aria-current="page"{% endif %}>[Stars]</a></li>
+      <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}>[CS]</a></li>
+      <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}>[Poker]</a></li>
       <li><a href="#terminal" data-open-terminal>[Terminal]</a></li>
     </ul>
   </nav>
@@ -74,14 +74,14 @@
       <br><a href="https://sqlite.org/">SQLite</a> {{ versions.sqlite }}
       <br><span class="dim">and too much coffee.</span>
     </p>
-    <p><span class="sb-label">Stars found</span><br><a href="{% url 'stars_page' %}" class="star-count" data-star-count>{{ star_count }}</a><span class="dim">/{{ star_total }}</span></p>
+    <p><span class="sb-label">Stars found</span><br><a href="{% url 'stars:index' %}" class="star-count" data-star-count>{{ star_count }}</a><span class="dim">/{{ star_total }}</span></p>
     <p class="quiet">Press <code>:</code> for a terminal, <code>?</code> for shortcuts.</p>
     {% endblock %}
   </aside>
 </div>
 
 <footer class="site-footer">
-  <span><a href="{% url 'show_legal_page' %}">[Legal]</a></span>
+  <span><a href="{% url 'pages:legal' %}">[Legal]</a></span>
   <span>rendered in <!--render-ms--></span>
   <span>build <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
   <span>no trackers, no analytics</span>

@@ -9,6 +9,6 @@
   bash: cd: {{ request.path|truncatechars:40 }}: <span class="white">No such file or directory</span>
 </pre>
   <p>Getting lost is <em>still progress</em>, though. Someone left a star out here.</p>
-  <p><a href="{% url 'show_landing_page' %}">[Return to the front page]</a></p>
+  <p><a href="{% url 'pages:home' %}">[Return to the front page]</a></p>
 </article>
 {% endblock %}

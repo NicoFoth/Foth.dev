@@ -39,7 +39,7 @@ def answer(request):
     level = 2 if request.POST.get('level') == '2' else 1
     part1, part2 = _solved(request)
     if level == 2 and not part1:
-        return redirect('puzzle_day')
+        return redirect('puzzle:day')
     if (part1, part2)[level - 1]:
         return render(request, 'puzzle/answer.html', {'outcome': 'done'})
 

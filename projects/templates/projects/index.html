@@ -8,14 +8,14 @@
 <div class="board ls">
 <div class="list-row"><span class="dim">$</span> <span class="white">ls -l ~/projects</span></div>
 <div class="list-row dim">total {{ projects|length }}</div>
-{% for project in projects %}<a class="list-row" href="{% url 'show_project' project.pk %}"><span class="dim">drwxr-xr-x  nico  nico  </span>{{ project.title }}/</a>
+{% for project in projects %}<a class="list-row" href="{% url 'projects:detail' project.pk %}"><span class="dim">drwxr-xr-x  nico  nico  </span>{{ project.title }}/</a>
 {% empty %}<div class="list-row dim">(nothing here yet)</div>
 {% endfor %}</div>
 {% for project in projects %}
 <article id="p{{ project.pk }}">
   <h2>--- {{ project.title }} ---</h2>
   <p>{{ project.short_description|default:project.description|default:"No description yet."|truncatewords:60 }}</p>
-  <p><a href="{% url 'show_project' project.pk %}">[Read more]</a>{% if project.github_link %} <a href="{{ project.github_link }}">[GitHub]</a>{% endif %}{% if project.demo_link %} <a href="{{ project.demo_link }}">[Demo]</a>{% endif %}</p>
+  <p><a href="{% url 'projects:detail' project.pk %}">[Read more]</a>{% if project.github_link %} <a href="{{ project.github_link }}">[GitHub]</a>{% endif %}{% if project.demo_link %} <a href="{{ project.demo_link }}">[Demo]</a>{% endif %}</p>
 </article>
 {% endfor %}
 {% endblock %}
