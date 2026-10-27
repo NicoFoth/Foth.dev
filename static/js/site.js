@@ -71,6 +71,22 @@
     setInterval(tick, reduceMotion.matches ? 60000 : 50);
   }
 
+  /* -------------------------------------------------------- tmux clock */
+
+  // tmux shows the time on the right of its status line; this one shows the visitor's
+  const clock = document.querySelector('[data-clock]');
+  if (clock) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const show = () => {
+      const now = new Date();
+      clock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())} ${pad(now.getDate())}-${now.toLocaleString('en', { month: 'short' })}-${String(now.getFullYear()).slice(2)}`;
+      clock.dateTime = now.toISOString();
+    };
+    show();
+    clock.hidden = false;
+    setInterval(show, 10000);
+  }
+
   /* --------------------------------------------------------- night owl */
 
   const hour = new Date().getHours();
@@ -196,6 +212,7 @@
         '  exit               close the terminal (or press Esc)',
         '',
         'Keyboard: `:` opens this terminal, `?` shows this help,',
+        '`g` then 1-7 switches window, as in the bar at the top;',
         '`g` then h/a/p/t/b/c jumps to home/about/projects/teaser/bits/contact.',
       ]);
     },
@@ -392,6 +409,8 @@
 
   let pendingG = false;
   const JUMPS = { h: '/', a: '/about/', p: '/projects/', t: '/teaser/', b: '/bits/', c: '/contact/' };
+  // g then a window number, like tmux's prefix key: the order of the windows in the top bar
+  document.querySelectorAll('.windows a').forEach((link, i) => { JUMPS[i + 1] = link.getAttribute('href'); });
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !term.hidden) { closeTerminal(); return; }

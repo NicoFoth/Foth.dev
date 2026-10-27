@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block title %}404 Not Found - Foth.dev{% endblock %}
 {% block content %}
-<h1>No such file or directory</h1>
+<header class="name">
+  <h1>ENOENT</h1>
+  <p>No such file or directory</p>
+</header>
+<h2>Description</h2>
 <pre class="shell"><span class="prompt">$ </span>cd {{ request.path|truncatechars:40 }}
 <span class="err">cd: {{ request.path|truncatechars:40 }}: No such file or directory</span></pre>
 <p>Nothing lives at this address: no page, no project, not even a brain teaser.</p>

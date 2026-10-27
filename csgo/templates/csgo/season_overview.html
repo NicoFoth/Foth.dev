@@ -2,8 +2,11 @@
 {% load csgo_extras %}
 {% block title %}{{ season.name }} - CS - Foth.dev{% endblock %}
 {% block content %}
-<h1>{{ season.name }}</h1>
-<p class="lead"><span class="dim">{{ season.startDate|date:"Y-m-d" }} to {{ season.endDate|date:"Y-m-d" }}.</span> <a href="{% url 'cs:index' %}">All seasons</a></p>
+<header class="name">
+  <h1>{{ season.name }}</h1>
+  <p>{{ season.startDate|date:"Y-m-d" }} to {{ season.endDate|date:"Y-m-d" }}. <a href="{% url 'cs:index' %}">All seasons</a></p>
+</header>
+<h2>Standings</h2>
 <div class="table-wrap">
 <table>
   <caption>Ranked <span class="dim">{{ ranked_after }} or more matches</span></caption>

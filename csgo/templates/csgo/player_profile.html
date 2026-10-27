@@ -2,11 +2,14 @@
 {% load csgo_extras %}
 {% block title %}{{ player.name }} - CS - Foth.dev{% endblock %}
 {% block content %}
-<h1>{{ player.name }}</h1>
-<p class="lead"><a href="{% url 'cs:index' %}">All seasons</a></p>
+<header class="name">
+  <h1>{{ player.name }}</h1>
+  <p>player stats. <a href="{% url 'cs:index' %}">All seasons</a></p>
+</header>
+<h2>Stats</h2>
 <div class="table-wrap" role="region" aria-label="Stats" tabindex="0">
 <table>
-  <caption>Stats</caption>
+  <caption class="visually-hidden">Stats</caption>
   <thead><tr>
     <th scope="col">Season</th>
     <th class="num" scope="col">Games</th>

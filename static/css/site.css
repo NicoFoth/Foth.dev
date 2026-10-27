@@ -1,6 +1,8 @@
-/* foth.dev: a cockpit display at night.
-   Amber is what glows: the name, headings, bits that are set.
-   Cyan is everything you can press. Magenta marks where you are. */
+/* foth.dev: a cockpit display at night, read like a man page.
+   Amber is what glows: the name, the LEDs, bits that are set.
+   Cyan is everything you can press. Magenta marks where you are.
+   The top bar is a tmux status line, every page a man page: a NAME(SECTION)
+   header, section headings at the margin, everything else indented. */
 
 @font-face { font-family: 'B612'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/b612-latin-400-normal.woff2') format('woff2'); }
 @font-face { font-family: 'B612'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/b612-latin-700-normal.woff2') format('woff2'); }
@@ -26,9 +28,10 @@
 
   --sans: 'B612', system-ui, sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --radius: 10px;
+  --radius: 2px;
   --status-h: 3.25rem;
-  --measure: 44rem;
+  --measure: 46rem;
+  --indent: 3.5rem;  /* how far man page text sits in from its section headings */
   --wide: 72rem;
   --gutter: 1.5rem;
 
@@ -47,11 +50,9 @@ body {
   min-height: 100vh;
   padding-bottom: calc(var(--status-h) + env(safe-area-inset-bottom));
   background-color: var(--bg);
-  /* a faint dot grid, like the unlit matrix of a display, under a soft glow from above */
-  background-image:
-    radial-gradient(60rem 28rem at 50% -8rem, rgb(79 216 235 / .07), transparent 70%),
-    radial-gradient(rgb(143 170 166 / .06) 1px, transparent 1.2px);
-  background-size: auto, 22px 22px;
+  /* a faint dot grid, like the unlit matrix of a display */
+  background-image: radial-gradient(rgb(143 170 166 / .06) 1px, transparent 1.2px);
+  background-size: 22px 22px;
   color: var(--text);
   font: 400 1.0625rem/1.65 var(--sans);
   overflow-wrap: break-word;
@@ -60,13 +61,7 @@ body {
 ::selection { background: rgb(255 178 63 / .35); color: #fff; }
 
 h1, h2, h3, h4 { line-height: 1.25; margin: 2.25rem 0 .75rem; font-weight: 700; }
-h1 {
-  margin-top: 0;
-  color: var(--amber);
-  font-size: clamp(2rem, 5vw, 2.6rem);
-  letter-spacing: -.01em;
-  text-shadow: 0 0 22px var(--amber-soft);
-}
+h1 { margin-top: 0; color: var(--amber); font-size: 1.6rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.15rem; }
 h4 { font-size: 1rem; }
@@ -97,7 +92,7 @@ kbd {
   padding: .05em .45em;
   border: 1px solid var(--rule);
   border-bottom-width: 2px;
-  border-radius: 5px;
+  border-radius: var(--radius);
   background: var(--panel);
 }
 pre {
@@ -115,7 +110,6 @@ pre code { padding: 0; background: none; font-size: 1em; }
 hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 
 .dim { color: var(--dim); }
-.lead { font-size: 1.15rem; color: var(--dim); }
 .visually-hidden {
   position: absolute !important;
   width: 1px; height: 1px;
@@ -128,7 +122,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 .skip-link {
   position: absolute; left: 1rem; top: -5rem; z-index: 60;
   padding: .75rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--amber);
   color: var(--bg);
   font-weight: 700;
@@ -136,68 +130,113 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 }
 .skip-link:focus { top: 1rem; }
 
-/* ---------------------------------------------------------------- topbar */
+/* ------------------------------------------------------------------ tmux */
 
-.topbar {
+/* The top bar is a tmux status line: session name, numbered windows, the
+   current one marked with a *, and a clock on the right. g then a number
+   switches window (site.js). */
+.tmux {
   display: flex;
   align-items: center;
-  gap: 1rem 2rem;
-  padding: .75rem max(var(--gutter), (100% - var(--wide)) / 2);
+  gap: 0 1.25rem;
+  padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
   border-bottom: 1px solid var(--rule);
+  background: var(--panel);
+  font: .875rem/1 var(--mono);
 }
+.tmux a { text-decoration: none; }
+.tmux a:hover { text-shadow: none; }
 
-.wordmark {
-  display: inline-flex;
+.tmux-session {
+  display: flex;
   align-items: center;
   min-height: 44px;
   color: var(--amber);
-  font-size: 1.3rem;
-  font-weight: 700;
-  text-decoration: none;
-  text-shadow: 0 0 16px var(--amber-soft);
+  font-weight: 600;
 }
-.wordmark span { color: var(--dim); text-shadow: none; }
-.wordmark:hover { text-shadow: 0 0 22px var(--amber); }
+.tmux-session:hover { text-shadow: 0 0 12px var(--amber-soft); }
 
-.nav { margin-left: auto; min-width: 0; }
-.nav ul { display: flex; gap: .15rem; margin: 0; padding: 0; list-style: none; }
-.nav a {
+.windows ul { display: flex; flex-wrap: wrap; gap: 0 .4ch; margin: 0; padding: 0; list-style: none; }
+.windows a {
   display: flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 .7rem;
-  border-radius: 8px;
+  padding: 0 .6ch;
   white-space: nowrap;
-  text-decoration: none;
 }
-.nav a:hover { background: rgb(79 216 235 / .07); text-shadow: none; }
-.nav a[aria-current="page"] {
-  color: var(--magenta);
-  box-shadow: inset 0 -2px 0 var(--magenta);
-  border-radius: 8px 8px 0 0;
-}
+.windows a::after { content: ' '; white-space: pre; }
+.windows a:hover { background: rgb(79 216 235 / .08); }
+.win-n { color: var(--dim); }
+.windows a[aria-current="page"] { background: var(--magenta); color: var(--bg); }
+.windows a[aria-current="page"] .win-n { color: inherit; }
+.windows a[aria-current="page"]::after { content: '*' / ''; }
 
-/* ------------------------------------------------------------ main, footer */
+.tmux-right { display: flex; align-items: center; gap: 1.25rem; margin-left: auto; color: var(--dim); white-space: nowrap; }
+.tmux-right a { display: flex; align-items: center; min-height: 44px; }
+.tmux-right a::after { content: ' \2197' / ''; white-space: pre; }
+
+/* -------------------------------------------------------------- man page */
 
 .column {
   display: block;
   max-width: calc(var(--measure) + 2 * var(--gutter));
   margin: 0 auto;
-  padding: 3rem var(--gutter) 4rem;
+  padding: 1.25rem var(--gutter) 4rem;
 }
 
-.footer {
+.man-head, .man-foot {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: .25rem 1.5rem;
-  padding: 1.25rem max(var(--gutter), (100% - var(--wide)) / 2) 1.75rem;
-  border-top: 1px solid var(--rule);
+  justify-content: space-between;
+  gap: 1rem;
   color: var(--dim);
-  font-size: .875rem;
+  font: .8125rem/1.5 var(--mono);
 }
-.footer a { display: inline-block; padding: .4rem 0; }
+.man-head { margin-bottom: 2.5rem; }
+
+/* Everything is indented except the section headings, which sit at the margin. */
+.column > :not(article, h2, .man-head, .name, .display),
+.column > article > :not(h2, .name) { margin-left: var(--indent); }
+
+.column > h2, .column > article > h2, .name::before {
+  display: block;
+  margin: 2.5rem 0 .6rem;
+  color: var(--text);
+  font: 600 .875rem/1.4 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* NAME: the page title, a dash and what the page is, like "ls - list directory contents" */
+.name { margin: 0 0 0; padding-left: var(--indent); }
+.name::before { content: 'Name' / ''; margin: 0 0 .6rem calc(-1 * var(--indent)); }
+.display + .name::before { margin-top: 2.5rem; }
+.name h1, .name p { display: inline; margin: 0; }
+.name h1 { font-size: 1.35rem; line-height: 1.5; }
+.name p { color: var(--dim); font-size: 1.1rem; }
+.name p::before { content: ' \2014  ' / ''; white-space: pre; color: var(--dim); }
+
+/* a tagged list, the .TP of man pages: a term at the left, its text next to it */
+.tp { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 2rem; margin: 0 0 1.1rem; }
+.tp dt { font-family: var(--mono); font-size: .95rem; line-height: 1.75; white-space: nowrap; }
+.tp dd { margin: 0; color: var(--dim); }
+.tp dd p { margin: 0 0 .35rem; }
+.tp-stacked { grid-template-columns: 1fr; gap: 0; }
+.tp-stacked dt { margin-top: 1rem; font-family: var(--sans); font-size: 1.1rem; font-weight: 700; white-space: normal; }
+.tp-stacked dt:first-child { margin-top: 0; }
+.tp-stacked dd { padding-left: 2ch; }
+.tp-stacked dd p { color: var(--text); }
+.seen { color: var(--dim); font-family: var(--mono); }
+
+.xref { font-family: var(--mono); font-size: .95em; white-space: nowrap; }
+
+.footer {
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 1.25rem var(--gutter) 1.75rem;
+  border-top: 1px solid var(--rule);
+}
 .footer a[aria-current="page"] { color: var(--magenta); }
+.footer-small { margin: .5rem 0 0; color: var(--dim); font-size: .8125rem; }
 
 /* ----------------------------------------------------------- status line */
 
@@ -224,7 +263,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   gap: .65rem;
   min-height: 44px;
   padding: 0 .5rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   color: var(--dim);
   text-decoration: none;
 }
@@ -260,7 +299,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   min-height: 44px;
   padding: 0 .85rem;
   border: 1px solid var(--cyan-soft);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--cyan);
   font: inherit;
@@ -327,7 +366,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   height: min(26rem, calc(100dvh - var(--status-h) - 6rem));
   transform: translateX(-50%);
   border: 1px solid var(--rule);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: rgb(8 19 22 / .97);
   box-shadow: 0 24px 70px rgb(0 0 0 / .6), 0 0 40px rgb(79 216 235 / .08);
   font: .9rem/1.5 var(--mono);
@@ -348,7 +387,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   min-width: 44px;
   min-height: 40px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: none;
   color: var(--cyan);
   font: inherit;
@@ -386,7 +425,7 @@ input:not([type]), input[type="text"], input[type="email"], input[type="password
   min-height: 44px;
   padding: .55rem .8rem;
   border: 1px solid var(--rule);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--inset);
   color: var(--text);
   font: inherit;
@@ -403,7 +442,7 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; margin: 0; accent-colo
   min-height: 44px;
   padding: 0 1.25rem;
   border: 1px solid var(--cyan);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: rgb(79 216 235 / .07);
   color: var(--cyan);
   font: 700 1rem var(--sans);
@@ -422,13 +461,10 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; margin: 0; accent-colo
 
 /* ------------------------------------------------------------------- home */
 
-.hero h1 { margin: 1.75rem 0 .25rem; font-size: clamp(2.4rem, 8vw, 3.6rem); }
-.hero .lead { margin-bottom: 2.5rem; }
-
 .display {
   padding: clamp(.6rem, 2.5vw, 1.4rem);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: radial-gradient(ellipse at 50% 35%, #11272B, var(--inset) 75%);
   box-shadow: inset 0 0 40px rgb(0 0 0 / .55), 0 0 70px rgb(255 178 63 / .07);
 }
@@ -463,26 +499,6 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; margin: 0; accent-colo
   59% { opacity: .18; }
 }
 @keyframes jolt { 50% { opacity: 1; } 100% { opacity: .2; } }
-
-.intro { margin-bottom: 3rem; }
-
-.index h2 { margin: 0 0 .75rem; }
-.index ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
-.index li { border-bottom: 1px solid var(--rule); }
-.index a {
-  display: grid;
-  grid-template-columns: 8.5rem 1fr auto;
-  gap: .15rem 1.5rem;
-  align-items: baseline;
-  min-height: 44px;
-  padding: .8rem .75rem;
-  color: var(--dim);
-  text-decoration: none;
-}
-.index a:hover { background: rgb(79 216 235 / .05); text-shadow: none; }
-.index-name { color: var(--cyan); font-weight: 700; }
-.index a:hover .index-name { text-decoration: underline; text-underline-offset: .22em; }
-.index-seen { color: var(--dim); }
 
 /* ----------------------------------------------------------------- tables */
 
@@ -520,7 +536,7 @@ tr.group th { padding-top: .9rem; color: var(--text); font-size: .875rem; font-w
   margin: 0;
   padding: 0 .85rem;
   border: 1px solid var(--rule);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--panel);
   font-weight: 400;
   cursor: pointer;
@@ -532,15 +548,11 @@ tr.group th { padding-top: .9rem; color: var(--text); font-size: .875rem; font-w
 .note {
   padding: .8rem 1rem;
   border-left: 3px solid var(--amber);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: 0;
   background: var(--panel);
   color: var(--dim);
 }
 
-.entries { margin: 2rem 0 0; padding: 0; list-style: none; }
-.entry { padding: 1.5rem 0; border-top: 1px solid var(--rule); }
-.entry h2 { margin: 0 0 .4rem; font-size: 1.3rem; }
-.entry p:last-child { margin-bottom: 0; }
 .links { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; }
 .links a { display: inline-block; padding: .35rem 0; }
 
@@ -568,7 +580,7 @@ tr.group th { padding-top: .9rem; color: var(--text); font-size: .875rem; font-w
 
 /* ----------------------------------------------------------------- teaser */
 
-.tasks { margin: 2rem 0; padding: 0; list-style: none; }
+.tasks { margin: 0 0 2rem; padding: 0; list-style: none; }
 .task {
   margin-bottom: 1.25rem;
   padding: 1.25rem 1.4rem;
@@ -599,7 +611,7 @@ tr.group th { padding-top: .9rem; color: var(--text); font-size: .875rem; font-w
   margin: 2rem 0 1rem;
   padding: 1.25rem clamp(.75rem, 3vw, 1.5rem) 1rem;
   border: 1px solid var(--rule);
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: var(--inset);
   box-shadow: inset 0 0 30px rgb(0 0 0 / .5);
 }
@@ -611,7 +623,7 @@ tr.group th { padding-top: .9rem; color: var(--text); font-size: .875rem; font-w
 .register-value { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; align-items: baseline; font-family: var(--mono); }
 .register-value .hex { color: var(--amber); font-size: 1.8rem; text-shadow: 0 0 16px var(--amber-soft); }
 
-.bit-list { margin: 2rem 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+.bit-list { margin: 0 0 2rem; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
 .bit-list li {
   display: grid;
   grid-template-columns: 4.25rem 1rem 1fr;
@@ -654,25 +666,14 @@ body.hc * { text-shadow: none !important; }
 /* ---------------------------------------------------------------- narrow */
 
 @media (max-width: 920px) {
-  .topbar { flex-wrap: wrap; padding-bottom: 0; gap: 0; }
-  .nav {
-    flex: 1 0 100%;
-    margin: 0 calc(-1 * var(--gutter));
-    padding: 0 2.5rem 0 var(--gutter);
-    overflow-x: auto;
-    scrollbar-width: none;
-    /* fade the right edge so it is clear the strip scrolls */
-    mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
-  }
-  .nav::-webkit-scrollbar { display: none; }
-  .nav a { padding: 0 .65rem; }
-  .nav li:first-child a { padding-left: 0; }
+  /* the windows move to a line of their own and wrap, so none of them hide off screen */
+  .tmux { flex-wrap: wrap; }
+  .windows { order: 3; flex: 1 0 100%; margin: 0 -.6ch; border-top: 1px solid var(--rule); }
 }
 
 @media (max-width: 640px) {
-  :root { --gutter: 1rem; }
+  :root { --gutter: 1rem; --indent: 1.25rem; }
   body { font-size: 1rem; }
-  .column { padding-top: 2rem; }
   .status { gap: .6rem; }
   .status-uptime { display: none; }
   .status-terminal { padding: 0 .75rem; }
@@ -683,9 +684,11 @@ body.hc * { text-shadow: none !important; }
   .led { width: 9px; height: 9px; }
   .leds .led:nth-child(4n):not(:last-child) { margin-right: 3px; }
   .register { gap: .45rem; padding: 0 .25rem; }
-  .index a { grid-template-columns: 1fr auto; }
-  .index-text { grid-row: 2; grid-column: 1; }
-  .index-seen { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
+  .man-manual { display: none; }
+  .tmux-clock { display: none; }
+  .tp { grid-template-columns: 1fr; gap: 0; }
+  .tp dd { margin-bottom: .6rem; padding-left: 2ch; }
+  .man-foot { flex-wrap: wrap; }
   .teams { grid-template-columns: 1fr; }
   .toasts { right: .5rem; width: calc(100vw - 1rem); }
   .terminal { width: calc(100vw - 1rem); }

@@ -3,15 +3,19 @@
 {% block description %}A small first-semester computer science brain teaser: trace a recursive function, then find its smallest input.{% endblock %}
 {% block content %}
 <article class="prose teaser">
-  <h1>Brain teaser</h1>
-  <p class="lead">A <i lang="de">Knobelaufgabe</i>, the kind of small exercise you get on the first problem sheets of a computer science degree. Pen and paper are enough. Each part you solve sets one of the site's hidden <a href="{% url 'bits:index' %}">bits</a>.</p>
+  <header class="name">
+    <h1>teaser</h1>
+    <p>A <i lang="de">Knobelaufgabe</i>, the kind of small exercise you get on the first problem sheets of a computer science degree. Pen and paper are enough. Each part you solve sets one of the site's hidden <a href="{% url 'bits:index' %}">bits</a>.</p>
+  </header>
 
+  <h2>Description</h2>
   <p>Here is a function in Python. <code>//</code> divides and rounds down, <code>%</code> is the remainder.</p>
 <pre class="code"><code><span class="kw">def</span> <span class="fn">mystery</span>(n):
     <span class="kw">if</span> n == <span class="num">0</span>:
         <span class="kw">return</span> <span class="num">0</span>
     <span class="kw">return</span> mystery(n // <span class="num">2</span>) + n % <span class="num">2</span></code></pre>
 
+  <h2>Exercises</h2>
   <ol class="tasks">
     <li id="task-a" class="task{% if solved.a %} is-solved{% endif %}">
       <h2><span class="task-label">(a)</span> What does <code>mystery(2025)</code> return?</h2>

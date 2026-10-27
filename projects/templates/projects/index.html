@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
 {% block title %}Projects - Foth.dev{% endblock %}
 {% block content %}
-<h1>Projects</h1>
-<p class="lead">Things I built after work, because I wanted them to exist.</p>
-<ul class="entries">
+<header class="name">
+  <h1>projects</h1>
+  <p>things I built after work, because I wanted them to exist</p>
+</header>
+<h2>Projects</h2>
+<dl class="tp tp-stacked">
 {% for project in projects %}
-  <li class="entry" id="p{{ project.pk }}">
-    <h2><a href="{% url 'projects:detail' project.pk %}">{{ project.title }}</a></h2>
+  <dt id="p{{ project.pk }}"><a href="{% url 'projects:detail' project.pk %}">{{ project.title }}</a></dt>
+  <dd>
     <p>{{ project.short_description|default:project.description|default:"No description yet."|truncatewords:60 }}</p>
     {% if project.github_link or project.demo_link %}<p class="links">{% if project.github_link %}<a href="{{ project.github_link }}">Source on GitHub</a>{% endif %}{% if project.demo_link %}<a href="{{ project.demo_link }}">Try it</a>{% endif %}</p>{% endif %}
-  </li>
+  </dd>
 {% empty %}
-  <li class="entry dim">Nothing here yet.</li>
+  <dt class="dim">Nothing here yet.</dt>
 {% endfor %}
-</ul>
+</dl>
+<h2>See also</h2>
+<p><a href="https://github.com/NicoFoth" rel="me noopener">github.com/NicoFoth</a>, for everything that never made it onto this list.</p>
 {% endblock %}

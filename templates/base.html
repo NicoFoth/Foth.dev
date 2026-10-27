@@ -35,23 +35,24 @@
 <body data-bits="{{ bit_keys|join:',' }}" data-bit-order="{{ bit_order|join:',' }}" data-claim-url="{% url 'bits:claim' %}">
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="topbar">
-  <a class="wordmark" href="{% url 'pages:home' %}"{% if current == 'pages:home' %} aria-current="page"{% endif %}>foth<span>.dev</span></a>
-  <nav class="nav" aria-label="Main">
+<header class="tmux">
+  <a class="tmux-session" href="{% url 'pages:home' %}"{% if current == 'pages:home' %} aria-current="page"{% endif %}>[foth.dev]</a>
+  <nav class="windows" aria-label="Main">
     <ul>
-      <li><a href="{% url 'pages:about' %}"{% if current == 'pages:about' %} aria-current="page"{% endif %}>About</a></li>
-      <li><a href="{% url 'projects:index' %}"{% if section == 'projects' %} aria-current="page"{% endif %}>Projects</a></li>
-      <li><a href="{% url 'teaser:sheet' %}"{% if section == 'teaser' %} aria-current="page"{% endif %}>Brain teaser</a></li>
-      <li><a href="{% url 'bits:index' %}"{% if current == 'bits:index' %} aria-current="page"{% endif %}>Bits</a></li>
-      <li><a href="{% url 'pages:contact' %}"{% if current == 'pages:contact' %} aria-current="page"{% endif %}>Contact</a></li>
-      <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}>CS</a></li>
-      <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}>Poker</a></li>
-      <li><a href="https://github.com/NicoFoth" rel="me noopener">GitHub</a></li>
+      <li><a href="{% url 'pages:about' %}"{% if current == 'pages:about' %} aria-current="page"{% endif %}><span class="win-n">1:</span>about</a></li>
+      <li><a href="{% url 'projects:index' %}"{% if section == 'projects' %} aria-current="page"{% endif %}><span class="win-n">2:</span>projects</a></li>
+      <li><a href="{% url 'teaser:sheet' %}"{% if section == 'teaser' %} aria-current="page"{% endif %}><span class="win-n">3:</span>teaser</a></li>
+      <li><a href="{% url 'bits:index' %}"{% if current == 'bits:index' %} aria-current="page"{% endif %}><span class="win-n">4:</span>bits</a></li>
+      <li><a href="{% url 'pages:contact' %}"{% if current == 'pages:contact' %} aria-current="page"{% endif %}><span class="win-n">5:</span>contact</a></li>
+      <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}><span class="win-n">6:</span>cs</a></li>
+      <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}><span class="win-n">7:</span>poker</a></li>
     </ul>
   </nav>
+  <span class="tmux-right"><a href="https://github.com/NicoFoth" rel="me noopener">github</a><time class="tmux-clock" data-clock hidden></time></span>
 </header>
 
 <main id="main" class="{% block main_class %}column{% endblock %}">
+  <div class="man-head" aria-hidden="true"><span>{{ man.title }}</span><span class="man-manual">{{ man.manual }}</span><span>{{ man.title }}</span></div>
   {% for message in messages %}{% if 'bit' not in message.tags %}
   <p class="notice notice-{{ message.level_tag }}" role="status">{{ message }}</p>
   {% endif %}{% endfor %}
@@ -59,12 +60,12 @@
 </main>
 
 <footer class="footer">
-  <a href="{% url 'pages:legal' %}"{% if current == 'pages:legal' %} aria-current="page"{% endif %}>Legal</a>
-  <span>Build <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
-  <span>Rendered in <!--render-ms--></span>
-  <span>Django {{ versions.django }}, Python {{ versions.python }}, SQLite {{ versions.sqlite }}</span>
-  <span>No trackers, no analytics</span>
-  {% if user.is_authenticated %}<span>Signed in as {{ user.get_username }}</span>{% endif %}
+  <div class="man-foot">
+    <span>foth.dev <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
+    <span>rendered in <!--render-ms--></span>
+    <span aria-hidden="true">{{ man.title }}</span>
+  </div>
+  <p class="footer-small">Django {{ versions.django }}, Python {{ versions.python }}, SQLite {{ versions.sqlite }}. No trackers, no analytics. <a href="{% url 'pages:legal' %}"{% if current == 'pages:legal' %} aria-current="page"{% endif %}>Legal</a>{% if user.is_authenticated %}. Signed in as {{ user.get_username }}{% endif %}</p>
 </footer>
 
 <div class="toasts" aria-live="polite">

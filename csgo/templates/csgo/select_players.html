@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Team generator - CS - Foth.dev{% endblock %}
 {% block content %}
-<h1>Team generator</h1>
-<p class="lead">Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
+<header class="name">
+  <h1>teams</h1>
+  <p>Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
+</header>
+<h2>Players</h2>
 <form method="post">
   {% csrf_token %}
   <fieldset class="checks">
