@@ -4,9 +4,9 @@ import hmac
 from django.conf import settings
 from django.contrib import messages
 
-from .registry import BY_KEY, MENU_PAGES, STARS
+from .registry import BITS, BY_KEY, MENU_PAGES
 
-SESSION_KEY = 'stars'
+SESSION_KEY = 'bits'
 SEEN_KEY = 'seen'
 
 
@@ -15,7 +15,7 @@ def collected(request):
 
 
 def award(request, key, notify=True):
-    """Give the visitor a star. Returns True if it is a new one."""
+    """Give the visitor a bit. Returns True if it is a new one."""
     have = collected(request)
     if key in have:
         return False
@@ -23,8 +23,8 @@ def award(request, key, notify=True):
     if notify:
         messages.add_message(
             request, messages.SUCCESS,
-            f'You found a star: {BY_KEY[key].title}! [{len(have) + 1}/{len(STARS)}]',
-            extra_tags='star',
+            f'Bit set: {BY_KEY[key].title}. {len(have) + 1} of {len(BITS)} found.',
+            extra_tags='bit',
         )
     return True
 

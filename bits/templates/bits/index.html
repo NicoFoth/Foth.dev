@@ -3,13 +3,13 @@
 {% block content %}
 <article>
   <h2>--- Stars ---</h2>
-  <p>There are <em>{{ star_total }} stars</em> hidden around this site. Each one you find lights up a star in the sky on the <a href="{% url 'pages:home' %}">[front page]</a>. Progress is kept in a cookie on your machine and nowhere else.</p>
-  <p>You have found <span class="gold glow">{{ star_count }}</span> of them{% if star_count == star_total %}. All of them, actually. <em>Respect.</em>{% else %} so far.{% endif %}</p>
+  <p>There are <em>{{ bit_total }} stars</em> hidden around this site. Each one you find lights up a star in the sky on the <a href="{% url 'pages:home' %}">[front page]</a>. Progress is kept in a cookie on your machine and nowhere else.</p>
+  <p>You have found <span class="gold glow">{{ bit_count }}</span> of them{% if bit_count == bit_total %}. All of them, actually. <em>Respect.</em>{% else %} so far.{% endif %}</p>
 </article>
 <div class="stars-list board" role="list">
 {% for n, star, have in rows %}<div class="list-row{% if have %} star-have{% endif %}" role="listitem"><span class="board-rank">{{ n|stringformat:"2d" }})</span> {% if have %}<span class="gold glow">*</span> <span class="white">{{ star.title }}</span>{% else %}<span class="faint">*</span> <span class="dim">{{ star.hint }}</span>{% endif %}</div>
 {% endfor %}</div>
-{% if star_count < star_total %}
+{% if bit_count < bit_total %}
 <p class="quiet">Stuck? The terminal (<code>:</code>) knows a few things. So does the source.</p>
 {% endif %}
 {% endblock %}

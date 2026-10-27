@@ -6,8 +6,8 @@ from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 
-from stars.progress import collected, curl_code, seen
-from stars.registry import STARS
+from bits.progress import collected, curl_code, seen
+from bits.registry import BITS
 
 from . import scene
 
@@ -16,7 +16,7 @@ MENU = [
     (4, 'about', 'pages:about'),
     (5, 'projects', 'projects:index'),
     (6, 'teaser', 'teaser:sheet'),
-    (7, 'stars', 'stars:index'),
+    (7, 'stars', 'bits:index'),
     (8, 'contact', 'pages:contact'),
     (9, 'cs', 'cs:index'),
     (10, 'poker', 'poker:index'),
@@ -35,7 +35,7 @@ def _is_url(target):
 def _sky(request):
     """The scene, with a lit sky slot for every star this visitor has found."""
     have = set(collected(request))
-    return scene.build(lit=[i for i, star in enumerate(STARS) if star.key in have])
+    return scene.build(lit=[i for i, star in enumerate(BITS) if star.key in have])
 
 
 def _marks(request, label, target):

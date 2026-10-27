@@ -4,8 +4,8 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import resolve, reverse
 
-from stars.progress import curl_code
-from stars.registry import MENU_PAGES
+from bits.progress import curl_code
+from bits.registry import MENU_PAGES
 
 from .models import ContactMessage
 
@@ -25,7 +25,7 @@ class PageTests(TestCase):
     def test_robots_and_humans(self):
         self.assertContains(self.client.get(reverse('pages:robots')), 'Disallow: /admin/')
         self.assertContains(self.client.get(reverse('pages:humans')), 'Nico Foth')
-        self.assertIn('humans', self.client.session['stars'])
+        self.assertIn('humans', self.client.session['bits'])
 
     def test_paths_hardcoded_in_site_js_exist(self):
         js = (settings.BASE_DIR / 'static/js/site.js').read_text()
@@ -38,7 +38,7 @@ class PageTests(TestCase):
     def test_404_awards_a_star(self):
         response = self.client.get('/definitely/not/here/')
         self.assertContains(response, 'Off The Map', status_code=404)
-        self.assertIn('lost', self.client.session['stars'])
+        self.assertIn('lost', self.client.session['bits'])
 
 
 class ContactTests(TestCase):

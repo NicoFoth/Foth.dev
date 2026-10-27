@@ -4,7 +4,7 @@
 {% block content %}
 <article class="prose teaser">
   <h1>Brain teaser</h1>
-  <p class="lead">A <i lang="de">Knobelaufgabe</i>, the kind of small exercise you get on the first problem sheets of a computer science degree. Pen and paper are enough. Each part you solve sets one of the site's hidden <a href="{% url 'stars:index' %}">bits</a>.</p>
+  <p class="lead">A <i lang="de">Knobelaufgabe</i>, the kind of small exercise you get on the first problem sheets of a computer science degree. Pen and paper are enough. Each part you solve sets one of the site's hidden <a href="{% url 'bits:index' %}">bits</a>.</p>
 
   <p>Here is a function in Python. <code>//</code> divides and rounds down, <code>%</code> is the remainder.</p>
 <pre class="code"><code><span class="kw">def</span> <span class="fn">mystery</span>(n):
@@ -37,7 +37,7 @@
   <section class="wrap-up">
     <h2>Both parts solved</h2>
     <p>The function has a name: population count, or popcount. Most CPUs do it in a single instruction (<code>POPCNT</code> on x86), and it shows up wherever bits get counted, from Hamming distances to chess engines that store the board as bitmasks.</p>
-    <p>There are more bits hidden around the site. <a href="{% url 'stars:index' %}">See which ones are left</a>.</p>
+    <p>There are more bits hidden around the site. <a href="{% url 'bits:index' %}">See which ones are left</a>.</p>
   </section>
   {% endif %}
 </article>

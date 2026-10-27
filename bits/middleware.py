@@ -3,7 +3,7 @@ from .registry import MENU_PAGES
 
 
 class SeenPagesMiddleware:
-    """Remembers which menu pages a visitor has opened (for the "explorer" star)."""
+    """Remembers which menu pages a visitor has opened (for the "explorer" bit)."""
 
     def __init__(self, get_response):
         self.get_response = get_response

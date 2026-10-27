@@ -15,7 +15,7 @@ WIDTH = 58
 HEIGHT = 21
 
 # The twelve sky positions that light up as visitors collect stars, in the
-# order of stars.registry.STARS.
+# order of bits.registry.BITS.
 STAR_SLOTS = [
     (1, 18), (2, 27), (1, 47), (4, 12), (5, 29), (4, 49),
     (6, 22), (6, 52), (7, 3), (3, 55), (0, 37), (5, 40),
