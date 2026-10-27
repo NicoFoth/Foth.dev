@@ -1,99 +1,108 @@
-"""The landing page: the night scene from scene.py with the site menu drawn into it.
+"""The landing page: an LED dot-matrix panel that spells NICO, and the page list.
 
 Rendered as HTML for browsers and as ANSI text for `curl foth.dev`.
 """
 from django.urls import reverse
-from django.utils.html import escape, format_html
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from bits.progress import collected, curl_code, seen
-from bits.registry import BITS
 
-from . import scene
+# 5x7 glyphs, one column of space between letters and a one-LED margin all round.
+GLYPHS = {
+    'N': ['#...#', '#...#', '##..#', '#.#.#', '#..##', '#...#', '#...#'],
+    'I': ['.###.', '..#..', '..#..', '..#..', '..#..', '..#..', '.###.'],
+    'C': ['.###.', '#...#', '#....', '#....', '#....', '#...#', '.###.'],
+    'O': ['.###.', '#...#', '#...#', '#...#', '#...#', '#...#', '.###.'],
+}
+WORD = 'NICO'
+WIDTH = 1 + len(WORD) * 6  # 25
+HEIGHT = 9
 
-# Rows of the scene that double as menu entries: (row, label, view name or url).
-MENU = [
-    (4, 'about', 'pages:about'),
-    (5, 'projects', 'projects:index'),
-    (6, 'teaser', 'teaser:sheet'),
-    (7, 'stars', 'bits:index'),
-    (8, 'contact', 'pages:contact'),
-    (9, 'cs', 'cs:index'),
-    (10, 'poker', 'poker:index'),
-    (11, 'github', 'https://github.com/NicoFoth'),
-    (12, 'terminal', '#terminal'),
-    (13, 'legal', 'pages:legal'),
+# The loose LED in the top right corner. Clicking it three times fixes it (site.js).
+LOOSE = (WIDTH - 1, 0)
+
+PAGES = [
+    ('About', 'pages:about', 'Background, written by a chatbot and left as it is.'),
+    ('Projects', 'projects:index', 'Things I built after work.'),
+    ('Brain teaser', 'teaser:sheet', 'A small exercise from a first-semester problem sheet.'),
+    ('Bits', 'bits:index', 'Twelve hidden bits and the ones you have found.'),
+    ('Contact', 'pages:contact', 'Leave me a message.'),
+    ('CS', 'cs:index', 'Elo ladder for our Counter-Strike evenings.'),
+    ('Poker', 'poker:index', 'Chip counts from our home games.'),
+    ('Legal', 'pages:legal', 'Impressum and privacy policy, in German.'),
 ]
 
-SLOTS = {pos: i for i, pos in enumerate(scene.STAR_SLOTS)}
+
+def lit():
+    """Coordinates (x, y) of every LED that is on."""
+    on = set()
+    for i, letter in enumerate(WORD):
+        for y, row in enumerate(GLYPHS[letter]):
+            for x, cell in enumerate(row):
+                if cell == '#':
+                    on.add((1 + i * 6 + x, 1 + y))
+    return on
 
 
-def _is_url(target):
-    return target.startswith(('#', 'http'))
-
-
-def _sky(request):
-    """The scene, with a lit sky slot for every star this visitor has found."""
-    have = set(collected(request))
-    return scene.build(lit=[i for i, star in enumerate(BITS) if star.key in have])
-
-
-def _marks(request, label, target):
-    """The little stars after a menu entry: puzzle parts solved, or page visited."""
-    if label == 'teaser':
-        have = collected(request)
-        return ['teaser_a' in have, 'teaser_b' in have]
-    if _is_url(target):
-        return []
-    return [target in seen(request)]
-
-
-def html(request):
-    # Built here rather than in a template: the scene is white-space: pre, so
-    # every stray space or newline between tags would show up on screen.
-    out = []
-    for y, runs in enumerate(_sky(request)):
-        art, x = '', 0
-        for text, m in runs:
-            if m == ' ':
-                art += escape(text)
-            elif m in ('*', 'O'):  # a star slot; site.js lights it up when a star is found
-                art += format_html('<span class="sc-{}" data-slot="{}">{}</span>', m, SLOTS[(y, x)], text)
+def panel(request):
+    on = lit()
+    fixed = 'flicker' in collected(request)
+    leds = []
+    for y in range(HEIGHT):
+        for x in range(WIDTH):
+            cx, cy = x * 10 + 5, y * 10 + 5
+            if (x, y) == LOOSE:
+                continue
+            if (x, y) in on:
+                # --d sets the delay of the power-on sweep, one step per diagonal
+                leds.append(format_html('<circle class="on" cx="{}" cy="{}" r="3.8" style="--d:{}"/>', cx, cy, x + y))
             else:
-                art += format_html('<span class="sc-{}{}">{}</span>', m, ' moon' if m == 'm' else '', text)
-            x += len(text)
-        out.append(_menu_row(request, y, art) or f'<span>{art}</span>')
-    return mark_safe(''.join(out))
-
-
-def _menu_row(request, y, art):
-    entry = next((e for e in MENU if e[0] == y), None)
-    if entry is None:
-        return None
-    _, label, target = entry
-    href = target if _is_url(target) else reverse(target)
-    marks = ''.join(f'<span class="cal-mark{" on" if on else ""}">*</span>' for on in _marks(request, label, target))
-    extra = ' data-open-terminal' if target == '#terminal' else ''
+                leds.append(format_html('<circle cx="{}" cy="{}" r="2.4"/>', cx, cy))
+    x, y = LOOSE
+    loose = format_html(
+        '<g class="loose{}" data-loose role="button" tabindex="0" aria-label="{}">'
+        '<circle class="hit" cx="{}" cy="{}" r="5"/><circle class="led" cx="{}" cy="{}" r="3.8"/></g>',
+        ' fixed' if fixed else '', 'Repaired LED' if fixed else 'Loose LED',
+        x * 10 + 5, y * 10 + 5, x * 10 + 5, y * 10 + 5,
+    )
     return format_html(
-        '<a href="{}"{}>{}  <span class="cal-label">{}</span>{}</a>',
-        href, mark_safe(extra), mark_safe(art), f'{label:<9}', mark_safe(marks),
+        '<svg class="panel" viewBox="0 0 {} {}" role="img" aria-labelledby="panel-title">'
+        '<title id="panel-title">NICO, spelled out in amber LEDs</title>{}{}</svg>',
+        WIDTH * 10, HEIGHT * 10, mark_safe(''.join(leds)), loose,
     )
 
 
-def text(request):
-    art = scene.ansi(_sky(request))
-    for row, label, target in MENU:
-        if target == '#terminal':
-            continue
-        href = target if _is_url(target) else request.build_absolute_uri(reverse(target))
-        art[row] += f'   \x1b[38;5;34m{label:<9}\x1b[0m \x1b[38;5;240m{href}\x1b[0m'
-    return '\n'.join(art) + f"""
+def pages(request):
+    visited = set(seen(request))
+    return [
+        {'name': name, 'url': reverse(view), 'text': text, 'visited': view in visited}
+        for name, view, text in PAGES
+    ]
 
-  \x1b[1;38;5;46mFoth.dev\x1b[0m  Nico Foth, software engineer.
+
+def context(request):
+    return {'panel': panel(request), 'pages': pages(request)}
+
+
+def text(request):
+    on = lit()
+    amber, dim, cyan, reset = '\x1b[1;38;5;214m', '\x1b[38;5;23m', '\x1b[38;5;80m', '\x1b[0m'
+    rows = []
+    for y in range(HEIGHT):
+        rows.append('  ' + ''.join(f'{amber}██{reset}' if (x, y) in on else f'{dim}· {reset}' for x in range(WIDTH)))
+    links = [f'  {cyan}{name:<13}{reset}{request.build_absolute_uri(reverse(view))}' for name, view, _ in PAGES]
+    links.append(f'  {cyan}{"GitHub":<13}{reset}https://github.com/NicoFoth')
+    return '\n'.join(rows) + f"""
+
+  {amber}foth.dev{reset}  Nico Foth, software engineer.
+
+""" + '\n'.join(links) + f"""
 
   You fetched this with a terminal instead of a browser. Respect.
   The website has a terminal too (press \x1b[1m:\x1b[0m). Type this into it:
 
-      \x1b[38;5;227munlock {curl_code()}\x1b[0m
+      {amber}unlock {curl_code()}{reset}
 
 """
+

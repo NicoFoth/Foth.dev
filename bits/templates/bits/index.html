@@ -1,15 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Stars - Foth.dev{% endblock %}
+{% block title %}Bits - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- Stars ---</h2>
-  <p>There are <em>{{ bit_total }} stars</em> hidden around this site. Each one you find lights up a star in the sky on the <a href="{% url 'pages:home' %}">[front page]</a>. Progress is kept in a cookie on your machine and nowhere else.</p>
-  <p>You have found <span class="gold glow">{{ bit_count }}</span> of them{% if bit_count == bit_total %}. All of them, actually. <em>Respect.</em>{% else %} so far.{% endif %}</p>
-</article>
-<div class="stars-list board" role="list">
-{% for n, star, have in rows %}<div class="list-row{% if have %} star-have{% endif %}" role="listitem"><span class="board-rank">{{ n|stringformat:"2d" }})</span> {% if have %}<span class="gold glow">*</span> <span class="white">{{ star.title }}</span>{% else %}<span class="faint">*</span> <span class="dim">{{ star.hint }}</span>{% endif %}</div>
-{% endfor %}</div>
+<h1>Bits</h1>
+<p class="lead">This site has a 12-bit register, and each bit is hidden somewhere. Find one and it is set, here and in the status line at the bottom of every page. Your progress lives in a cookie on your machine and nowhere else.</p>
+
+<div class="register-big" aria-hidden="true">
+  {% for i, bit, found in rows reversed %}<span class="cell"><i class="led{% if found %} on{% endif %}"></i><span>{{ i }}</span></span>{% endfor %}
+</div>
+<p class="register-value"><span class="hex">{{ hex }}</span> <span class="dim">0b {{ nibbles|join:" " }}</span> <span>{{ bit_count }} of {{ bit_total }} set{% if bit_count == bit_total %}. All of them. Respect.{% endif %}</span></p>
+
+<ul class="bit-list">
+{% for i, bit, found in rows %}
+  <li{% if found %} class="found"{% endif %}>
+    <span class="bit-index">bit {{ i }}</span>
+    <i class="led{% if found %} on{% endif %}" aria-hidden="true"></i>
+    {% if found %}<span class="bit-title">{{ bit.title }}</span> <span class="visually-hidden">(set)</span>{% else %}<span class="hint">{{ bit.hint }}</span> <span class="visually-hidden">(not set yet)</span>{% endif %}
+  </li>
+{% endfor %}
+</ul>
 {% if bit_count < bit_total %}
-<p class="quiet">Stuck? The terminal (<code>:</code>) knows a few things. So does the source.</p>
+<p class="dim">Stuck? The terminal (press <kbd>:</kbd>) knows a few things. So does the page source.</p>
 {% endif %}
 {% endblock %}

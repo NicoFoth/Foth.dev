@@ -17,7 +17,7 @@ DEBUG = os.getenv('DJANGO_DEBUG') == '1'
 ALLOWED_HOSTS = ['foth.dev', 'www.foth.dev', 'localhost', '127.0.0.1', '176.9.90.101']
 
 # When TLS ends at the reverse proxy, Django sees plain HTTP and would reject
-# every POST from https://foth.dev (login, contact form, puzzle answers, stars)
+# every POST from https://foth.dev (login, contact form, brain teaser answers, bits)
 # in the CSRF origin check.
 CSRF_TRUSTED_ORIGINS = ['https://foth.dev', 'https://www.foth.dev']
 
@@ -83,7 +83,7 @@ DATABASES = {
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# Stars and puzzle progress live in the session. Signed cookies keep anonymous
+# Hidden bits and brain teaser progress live in the session. Signed cookies keep anonymous
 # visitors (and crawlers) from piling up rows in the sessions table.
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 365

@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Teams - CS - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- Teams ---</h2>
-</article>
+<h1>Teams</h1>
 <div class="teams">
-  <div class="board">
-    <div class="board-row board-head">Team A</div>
-    {% for player in team_a %}<div class="board-row board-win">  {{ player }}</div>
+  <div class="table-wrap">
+  <table>
+    <caption>Team A</caption>
+    <tbody>
+    {% for player in team_a %}<tr><td>{{ player }}</td></tr>
     {% endfor %}
+    </tbody>
+  </table>
   </div>
-  <div class="board">
-    <div class="board-row board-head">Team B</div>
-    {% for player in team_b %}<div class="board-row silver">  {{ player }}</div>
+  <div class="table-wrap">
+  <table>
+    <caption>Team B</caption>
+    <tbody>
+    {% for player in team_b %}<tr><td>{{ player }}</td></tr>
     {% endfor %}
+    </tbody>
+  </table>
   </div>
 </div>
-<p><a href="{% url 'cs:select_players' %}">[Shuffle again]</a> <a href="{% url 'cs:index' %}">[Rankings]</a></p>
+<div class="actions"><a class="button" href="{% url 'cs:select_players' %}">Shuffle again</a> <a href="{% url 'cs:index' %}">Rankings</a></div>
 {% endblock content %}

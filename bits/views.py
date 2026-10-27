@@ -17,6 +17,7 @@ def index(request):
         'rows': rows,
         'hex': f'0x{value:03X}',
         'binary': f'{value:012b}',
+        'nibbles': [f'{value:012b}'[i:i + 4] for i in range(0, 12, 4)],
     })
 
 

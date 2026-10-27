@@ -24,7 +24,7 @@ def _text(body):
 def home(request):
     if request.headers.get('User-Agent', '').lower().startswith(CLI_AGENTS):
         return _text(landing.text(request))
-    return render(request, 'pages/home.html', {'calendar': landing.html(request)})
+    return render(request, 'pages/home.html', landing.context(request))
 
 
 def about(request):
@@ -73,16 +73,13 @@ def humans_txt(request):
     Site: https://foth.dev
     GitHub: https://github.com/NicoFoth
 
-/* THANKS */
-    Eric Wastl, for Advent of Code and its unmistakable look.
-
 /* SITE */
     Standards: HTML, CSS, a little vanilla JS
     Components: Django {v['django']}, Python {v['python']}, SQLite {v['sqlite']}
-    Font: Source Code Pro (self-hosted)
+    Fonts: B612, made for Airbus cockpit displays, and IBM Plex Mono (both self-hosted)
     Build step: none
 
-    You found a star for reading this. Check {request.build_absolute_uri(reverse('bits:index'))}
+    Reading this set one of the hidden bits. Check {request.build_absolute_uri(reverse('bits:index'))}
 """)
 
 

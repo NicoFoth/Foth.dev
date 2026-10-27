@@ -1,15 +1,34 @@
 {% extends 'base.html' %}
 {% block title %}{{ match.map.name }} {{ match.endstate }} - CS - Foth.dev{% endblock %}
 {% block content %}
-<article>
-  <h2>--- {{ match.map.name }}: {{ match.endstate }} ---</h2>
-  <p><span class="dim">{{ match.date|date:"Y-m-d H:i" }}, {{ match.mode.name }},</span> <a href="{% url 'cs:season' season_id=match.season.id %}">[{{ match.season.name }}]</a></p>
-</article>
-<div class="board board-wrap">
-<div class="board-row board-head">{{ "Player"|ljust:"16" }}    K    A    D   HS   EF    UD   ADR</div>
-{% for p in winners %}<div class="board-row board-win"><a class="board-name" href="{% url 'cs:player' player_id=p.player.id %}">{{ p.player.name|ljust:"16" }}</a> {{ p.kills|rjust:"4" }} {{ p.assists|rjust:"4" }} {{ p.deaths|rjust:"4" }} {{ p.headshotKills|rjust:"4" }} {{ p.enemiesFlashed|rjust:"4" }} {{ p.utilityDamage|rjust:"5" }} {{ p.adr|rjust:"5" }}</div>
-{% endfor %}<div class="board-row faint">-------------------------------------------------------</div>
-{% for p in losers %}<div class="board-row board-loss"><a class="board-name" href="{% url 'cs:player' player_id=p.player.id %}">{{ p.player.name|ljust:"16" }}</a> {{ p.kills|rjust:"4" }} {{ p.assists|rjust:"4" }} {{ p.deaths|rjust:"4" }} {{ p.headshotKills|rjust:"4" }} {{ p.enemiesFlashed|rjust:"4" }} {{ p.utilityDamage|rjust:"5" }} {{ p.adr|rjust:"5" }}</div>
-{% endfor %}</div>
-<p class="quiet">Winners on top. HS = headshot kills, EF = enemies flashed, UD = utility damage.</p>
+<h1>{{ match.map.name }}, {{ match.endstate }}</h1>
+<p class="lead"><span class="dim">{{ match.date|date:"Y-m-d H:i" }}, {{ match.mode.name }}.</span> <a href="{% url 'cs:season' season_id=match.season.id %}">{{ match.season.name }}</a></p>
+<div class="table-wrap" role="region" aria-label="Scoreboard" tabindex="0">
+<table>
+  <caption>Scoreboard</caption>
+  <thead><tr>
+    <th scope="col">Player</th>
+    <th class="num" scope="col"><abbr title="Kills">K</abbr></th>
+    <th class="num" scope="col"><abbr title="Assists">A</abbr></th>
+    <th class="num" scope="col"><abbr title="Deaths">D</abbr></th>
+    <th class="num" scope="col"><abbr title="Headshot kills">HS</abbr></th>
+    <th class="num" scope="col"><abbr title="Enemies flashed">EF</abbr></th>
+    <th class="num" scope="col"><abbr title="Utility damage">UD</abbr></th>
+    <th class="num" scope="col"><abbr title="Average damage per round">ADR</abbr></th>
+  </tr></thead>
+  <tbody>
+    <tr class="group"><th colspan="8" scope="colgroup" class="win">Winners</th></tr>
+    {% for p in winners %}
+    <tr><th scope="row"><a href="{% url 'cs:player' player_id=p.player.id %}">{{ p.player.name }}</a></th><td class="num">{{ p.kills }}</td><td class="num">{{ p.assists }}</td><td class="num">{{ p.deaths }}</td><td class="num">{{ p.headshotKills }}</td><td class="num">{{ p.enemiesFlashed }}</td><td class="num">{{ p.utilityDamage }}</td><td class="num">{{ p.adr }}</td></tr>
+    {% endfor %}
+  </tbody>
+  <tbody>
+    <tr class="group"><th colspan="8" scope="colgroup" class="loss">Losers</th></tr>
+    {% for p in losers %}
+    <tr><th scope="row"><a href="{% url 'cs:player' player_id=p.player.id %}">{{ p.player.name }}</a></th><td class="num">{{ p.kills }}</td><td class="num">{{ p.assists }}</td><td class="num">{{ p.deaths }}</td><td class="num">{{ p.headshotKills }}</td><td class="num">{{ p.enemiesFlashed }}</td><td class="num">{{ p.utilityDamage }}</td><td class="num">{{ p.adr }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="dim">K kills, A assists, D deaths, HS headshot kills, EF enemies flashed, UD utility damage, ADR average damage per round.</p>
 {% endblock %}
