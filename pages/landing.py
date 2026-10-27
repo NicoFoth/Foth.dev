@@ -15,7 +15,7 @@ from . import scene
 MENU = [
     (4, 'about', 'pages:about'),
     (5, 'projects', 'projects:index'),
-    (6, 'puzzle', 'puzzle:day'),
+    (6, 'teaser', 'teaser:sheet'),
     (7, 'stars', 'stars:index'),
     (8, 'contact', 'pages:contact'),
     (9, 'cs', 'cs:index'),
@@ -40,9 +40,9 @@ def _sky(request):
 
 def _marks(request, label, target):
     """The little stars after a menu entry: puzzle parts solved, or page visited."""
-    if label == 'puzzle':
+    if label == 'teaser':
         have = collected(request)
-        return ['puzzle1' in have, 'puzzle2' in have]
+        return ['teaser_a' in have, 'teaser_b' in have]
     if _is_url(target):
         return []
     return [target in seen(request)]
