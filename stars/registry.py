@@ -13,8 +13,8 @@ class Star:
 
 
 STARS = [
-    Star('puzzle1', 'Cold Boot, part one', 'Solve the first half of Day 0.'),
-    Star('puzzle2', 'Cold Boot, part two', 'Then solve the other half.'),
+    Star('teaser_a', 'Traced it', 'Solve part (a) of the brain teaser.'),
+    Star('teaser_b', 'Ten ones', 'Solve part (b) of the brain teaser.'),
     Star('explorer', 'Tourist', 'Visit every page in the menu.'),
     Star('lost', 'Off the map', 'Get lost.'),
     Star('robots', 'Trespasser', 'Go where the robots are told not to.'),
@@ -35,5 +35,5 @@ CLIENT_CLAIMABLE = {'sudo', 'konami', 'moon', 'owl'}
 # Visiting all of these (by view name) earns the "explorer" star.
 MENU_PAGES = {
     'pages:home', 'pages:about', 'pages:contact', 'pages:legal',
-    'projects:index', 'puzzle:day', 'stars:index', 'cs:index', 'poker:index',
+    'projects:index', 'teaser:sheet', 'stars:index', 'cs:index', 'poker:index',
 }

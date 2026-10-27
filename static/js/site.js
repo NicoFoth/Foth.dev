@@ -123,7 +123,7 @@
   let greeted = false;
 
   const PAGES = {
-    '~': '/', home: '/', about: '/about/', projects: '/projects/', puzzle: '/puzzle/',
+    '~': '/', home: '/', about: '/about/', projects: '/projects/', teaser: '/teaser/',
     stars: '/stars/', contact: '/contact/', cs: '/cs/', poker: '/poker/', legal: '/legal/',
   };
   const FILES = {
@@ -365,7 +365,7 @@
   /* ---------------------------------------------------------- keyboard */
 
   let pendingG = false;
-  const JUMPS = { h: '/', a: '/about/', p: '/projects/', z: '/puzzle/', s: '/stars/', c: '/contact/' };
+  const JUMPS = { h: '/', a: '/about/', p: '/projects/', t: '/teaser/', s: '/stars/', c: '/contact/' };
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !term.hidden) { closeTerminal(); return; }

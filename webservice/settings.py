@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pages',
     'stars',
-    'puzzle',
+    'teaser',
     'projects',
     'csgo',
     'poker',

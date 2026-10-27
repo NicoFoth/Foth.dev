@@ -1,0 +1,11 @@
+<form method="post" action="{% url 'teaser:check' %}" class="answer">
+  {% csrf_token %}
+  <input type="hidden" name="task" value="{{ task }}">
+  <label for="answer-{{ task }}">Your answer to ({{ task }})</label>
+  <div class="answer-row">
+    <input id="answer-{{ task }}" name="answer" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" required aria-describedby="{% if feedback.task == task %}feedback-{{ task }} {% endif %}help-{{ task }}"{% if feedback.task == task %} value="{{ feedback.value }}" aria-invalid="true"{% endif %}>
+    <button type="submit">Check answer</button>
+  </div>
+  {% if feedback.task == task %}<p class="feedback" id="feedback-{{ task }}" role="alert">{{ feedback.text }}</p>{% endif %}
+  <p class="answer-help" id="help-{{ task }}">Decimal, hex (<code>0x3f</code>) and binary (<code>0b101</code>) all work.</p>
+</form>

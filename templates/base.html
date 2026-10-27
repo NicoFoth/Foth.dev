@@ -45,7 +45,7 @@
   <h1 class="title-event"><span class="title-event-wrap">{{ subtitle.0 }}</span><span class="title-bright">nico</span><span class="title-event-wrap">{{ subtitle.1 }}</span></h1>
   <nav class="nav-sub" aria-label="More">
     <ul>
-      <li><a href="{% url 'puzzle:day' %}"{% if section == 'puzzle' %} aria-current="page"{% endif %}>[Puzzle]</a></li>
+      <li><a href="{% url 'teaser:sheet' %}"{% if section == 'teaser' %} aria-current="page"{% endif %}>[Puzzle]</a></li>
       <li><a href="{% url 'stars:index' %}"{% if current == 'stars:index' %} aria-current="page"{% endif %}>[Stars]</a></li>
       <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}>[CS]</a></li>
       <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}>[Poker]</a></li>

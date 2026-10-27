@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Brain teaser - Foth.dev{% endblock %}
+{% block description %}A small first-semester computer science brain teaser: trace a recursive function, then find its smallest input.{% endblock %}
+{% block content %}
+<article class="prose teaser">
+  <h1>Brain teaser</h1>
+  <p class="lead">A <i lang="de">Knobelaufgabe</i>, the kind of small exercise you get on the first problem sheets of a computer science degree. Pen and paper are enough. Each part you solve sets one of the site's hidden <a href="{% url 'stars:index' %}">bits</a>.</p>
+
+  <p>Here is a function in Python. <code>//</code> divides and rounds down, <code>%</code> is the remainder.</p>
+<pre class="code"><code><span class="kw">def</span> <span class="fn">mystery</span>(n):
+    <span class="kw">if</span> n == <span class="num">0</span>:
+        <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> mystery(n // <span class="num">2</span>) + n % <span class="num">2</span></code></pre>
+
+  <ol class="tasks">
+    <li id="task-a" class="task{% if solved.a %} is-solved{% endif %}">
+      <h2><span class="task-label">(a)</span> What does <code>mystery(2025)</code> return?</h2>
+      {% if solved.a %}
+      <p class="solved">Solved: <strong>{{ answers.a }}</strong></p>
+      <p>Each call adds <code>n % 2</code>, the last binary digit of <code>n</code>, then calls itself with <code>n // 2</code>, which drops that digit. So <code>mystery</code> counts the 1s in <code>n</code> written in binary. 2025 is <code>0b11111101001</code>: eight 1s.</p>
+      {% else %}
+      {% include "teaser/answer_form.html" with task="a" %}
+      {% endif %}
+    </li>
+    <li id="task-b" class="task{% if solved.b %} is-solved{% endif %}">
+      <h2><span class="task-label">(b)</span> What is the smallest <code>n</code> for which <code>mystery(n)</code> returns 10?</h2>
+      {% if solved.b %}
+      <p class="solved">Solved: <strong>{{ answers.b }}</strong></p>
+      <p>Every 1 needs a binary digit of its own, so ten 1s need at least ten digits. The only ten-digit binary number with ten 1s is <code>0b1111111111</code>, which is 2<sup>10</sup> − 1 = 1023.</p>
+      {% else %}
+      {% include "teaser/answer_form.html" with task="b" %}
+      {% endif %}
+    </li>
+  </ol>
+
+  {% if solved.a and solved.b %}
+  <section class="wrap-up">
+    <h2>Both parts solved</h2>
+    <p>The function has a name: population count, or popcount. Most CPUs do it in a single instruction (<code>POPCNT</code> on x86), and it shows up wherever bits get counted, from Hamming distances to chess engines that store the board as bitmasks.</p>
+    <p>There are more bits hidden around the site. <a href="{% url 'stars:index' %}">See which ones are left</a>.</p>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}
