@@ -14,19 +14,16 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      # The site runs as the `website` service of the shared compose project on the
-      # server, built from this checkout (the Dockerfile runs collectstatic).
+      # The deploy key is restricted on the server to a forced command
+      # (/usr/local/sbin/deploy-foth-dev): git pull, rebuild the `website` compose
+      # service, migrate, reload nginx. The script sent here is ignored.
       - uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          script: |
-            set -euo pipefail
-            cd /home/website/Foth.dev
-            git pull --ff-only origin main
-            docker compose -f /home/central-routing-compose.yaml up -d --build website
+          script: deploy
 
       # From the runner, so it goes through DNS, TLS and nginx like a visitor would.
       # Retries cover the few seconds gunicorn needs to come up after the rebuild. The
