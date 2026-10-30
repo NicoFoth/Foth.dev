@@ -178,7 +178,7 @@
     'readme.txt': () => [
       'foth.dev',
       '========',
-      'A personal site, lit like a cockpit at night.',
+      'A personal site that pretends to be a terminal.',
       '',
       order.length + ' bits are hidden around here. `bits` shows your register.',
       'Pages are directories. `ls` lists them, `cd` goes there.',
@@ -327,7 +327,7 @@
     ssh: () => print('ssh: connect to host foth.dev port 22: Connection refused. Good.', 't-err'),
     git(args) {
       const sha = document.querySelector('.footer a[href*="/commit/"]')?.textContent || 'dev';
-      if (args[0] === 'log') return lines([`commit ${sha}`, 'Author: Nico Foth', '', '    redesign: a cockpit display at night']);
+      if (args[0] === 'log') return lines([`commit ${sha}`, 'Author: Nico Foth', '', '    redesign: lay every page out like a man page']);
       if (args[0] === 'blame') return print('It was me. It is always me.');
       print('git: try `git log`');
     },

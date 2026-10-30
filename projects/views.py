@@ -4,7 +4,7 @@ from .models import Project
 
 
 def index(request):
-    projects = Project.objects.order_by('id')
+    projects = Project.objects.all()
     return render(request, 'projects/index.html', {'projects': projects})
 
 

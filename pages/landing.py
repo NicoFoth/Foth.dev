@@ -23,12 +23,12 @@ HEIGHT = 9
 LOOSE = (WIDTH - 1, 0)
 
 PAGES = [
-    ('About', 'pages:about', 'Background, written by a chatbot and left as it is.'),
+    ('About', 'pages:about', 'Background, in my own words.'),
     ('Projects', 'projects:index', 'Things I built after work.'),
     ('Brain teaser', 'teaser:sheet', 'A small exercise from a first-semester problem sheet.'),
     ('Bits', 'bits:index', 'Twelve hidden bits and the ones you have found.'),
     ('Contact', 'pages:contact', 'Leave me a message.'),
-    ('CS', 'cs:index', 'Elo ladder for our Counter-Strike evenings.'),
+    ('CS', 'cs:index', 'Elo ladder from our Counter-Strike evenings, archived.'),
     ('Poker', 'poker:index', 'Chip counts from our home games.'),
     ('Legal', 'pages:legal', 'Impressum and privacy policy, in German.'),
 ]
