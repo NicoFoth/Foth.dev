@@ -1,27 +1,100 @@
-{% load static tailwind_tags %}
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}<!DOCTYPE html>
+<html lang="{% block lang %}en{% endblock %}">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    {% tailwind_css %}
-    
-    <title>Foth.dev</title>
-</head>
-<body class="bg-[#0F0F23]">
-    <div name="page-content" class="w-full sm:w-1/2 mx-5 font-mono">
-        <div name="navigation" class="items-end flex flex-row my-5">
-            <a class="basis-1/4" href="{% url 'show_landing_page' %}"><h1 class="text-lime-500 text-shadow-aoc shadow-lime-500  hover:text-red-500 hover:shadow-red-500">Foth.dev</h1></a>
-            <a class="basis-1/6" href="{% url 'show_about_page' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{About me}</h3></a>
-            <a class="basis-1/6" href="{% url 'show_projects' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{Projects}</h3></a>
-            <a class="basis-1/6" href="{% url 'show_contact_page' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{Contact}</h3></a>
-            <a class="basis-1/6" href="{% url 'show_poker_page' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{Poker}</h3></a>
-            <a class="basis-1/6" href="{% url 'cs_overview' %}"><h3 class="text-green-600  hover:text-green-500 hover:text-shadow-aoc hover:shadow-green-500">{CS}</h3></a>
-        </div>
-        {% block content %}
-        {% endblock content %}
-    </div>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#120C0C">
+<meta name="description" content="{% block description %}Nico Foth, software engineer. Projects, a brain teaser and other things built after hours.{% endblock %}">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>{% block title %}Foth.dev{% endblock %}</title>
+<link rel="icon" href="{% static 'favicon.ico' %}">
+<link rel="preload" href="{% static 'fonts/ibm-plex-mono-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'fonts/ibm-plex-mono-latin-600-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+<script>/* the saved colour scheme, set before the first paint so the page does not flash */
+try { const t = localStorage.getItem('theme'); if (['phosphor', 'amber', 'midnight'].indexOf(t) > -1) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="{% static 'css/site.css' %}?v={{ build_sha }}">
+<script src="{% static 'js/site.js' %}?v={{ build_sha }}" defer></script>
+</head><!--
+
+    ███████╗ ██████╗ ████████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗
+    ██╔════╝██╔═══██╗╚══██╔══╝██║  ██║   ██╔══██╗██╔════╝██║   ██║
+    █████╗  ██║   ██║   ██║   ███████║   ██║  ██║█████╗  ██║   ██║
+    ██╔══╝  ██║   ██║   ██║   ██╔══██║   ██║  ██║██╔══╝  ╚██╗ ██╔╝
+    ██║     ╚██████╔╝   ██║   ██║  ██║██╗██████╔╝███████╗ ╚████╔╝
+    ╚═╝      ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝
+
+    Oh, hello there, fellow source reader.
+
+    It's Django, one stylesheet and a bit of vanilla JS, without a
+    framework or a bundler. Everything is set in IBM Plex Mono at one
+    size, as in a terminal. The humans behind this are listed in
+    /humans.txt.
+
+    Twelve bits are hidden on this site. /robots.txt is a good start.
+
+-->
+<body data-bits="{{ bit_keys|join:',' }}" data-bit-order="{{ bit_order|join:',' }}" data-claim-url="{% url 'bits:claim' %}">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="tmux">
+  <a class="tmux-session" href="{% url 'pages:home' %}"{% if current == 'pages:home' %} aria-current="page"{% endif %}>[foth.dev]</a>
+  <nav class="windows" aria-label="Main">
+    <ul>
+      <li><a href="{% url 'pages:about' %}"{% if current == 'pages:about' %} aria-current="page"{% endif %}><span class="win-n">1:</span>about</a></li>
+      <li><a href="{% url 'projects:index' %}"{% if section == 'projects' %} aria-current="page"{% endif %}><span class="win-n">2:</span>projects</a></li>
+      <li><a href="{% url 'teaser:sheet' %}"{% if section == 'teaser' %} aria-current="page"{% endif %}><span class="win-n">3:</span>teaser</a></li>
+      <li><a href="{% url 'bits:index' %}"{% if current == 'bits:index' %} aria-current="page"{% endif %}><span class="win-n">4:</span>bits</a></li>
+      <li><a href="{% url 'pages:contact' %}"{% if current == 'pages:contact' %} aria-current="page"{% endif %}><span class="win-n">5:</span>contact</a></li>
+      <li><a href="{% url 'cs:index' %}"{% if section == 'cs' %} aria-current="page"{% endif %}><span class="win-n">6:</span>cs</a></li>
+      <li><a href="{% url 'poker:index' %}"{% if section == 'poker' %} aria-current="page"{% endif %}><span class="win-n">7:</span>poker</a></li>
+    </ul>
+  </nav>
+  <span class="tmux-right"><a href="https://github.com/NicoFoth" rel="me noopener">github</a><time class="tmux-clock" data-clock hidden></time></span>
+</header>
+
+<main id="main" class="{% block main_class %}column{% endblock %}">
+  <div class="man-head" aria-hidden="true"><span>{{ man.title }}</span><span class="man-manual">{{ man.manual }}</span><span>{{ man.title }}</span></div>
+  {% for message in messages %}{% if 'bit' not in message.tags %}
+  <p class="notice notice-{{ message.level_tag }}" role="status">{{ message }}</p>
+  {% endif %}{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="man-foot">
+    <span>foth.dev <a href="https://github.com/NicoFoth/Foth.dev/commit/{{ build_sha }}">{{ build_sha }}</a></span>
+    <span>rendered in <!--render-ms--></span>
+    <span aria-hidden="true">{{ man.title }}</span>
+  </div>
+  <p class="footer-small">Django {{ versions.django }}, Python {{ versions.python }}, SQLite {{ versions.sqlite }}. <a href="{% url 'pages:legal' %}"{% if current == 'pages:legal' %} aria-current="page"{% endif %}>Legal</a>{% if user.is_authenticated %}. Signed in as {{ user.get_username }}{% endif %}</p>
+</footer>
+
+<div class="toasts" aria-live="polite">
+  {% for message in messages %}{% if 'bit' in message.tags %}<p class="toast">{{ message }}</p>{% endif %}{% endfor %}
+</div>
+
+<div class="terminal" id="terminal" hidden>
+  <div class="terminal-bar">
+    <span>visitor@foth.dev</span>
+    <button type="button" class="terminal-close" data-close-terminal aria-label="Close terminal">Esc</button>
+  </div>
+  <div class="terminal-out" aria-live="polite"></div>
+  <form class="terminal-line" autocomplete="off">
+    <label class="terminal-prompt" for="terminal-input">visitor@foth.dev:~$</label>
+    <input class="terminal-input" id="terminal-input" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="send">
+  </form>
+</div>
+
+<aside class="status" aria-label="Status">
+  <span class="status-path">{{ shell_path }}</span>
+  <a class="register" href="{% url 'bits:index' %}" aria-label="{{ bit_count }} of {{ bit_total }} bits found">
+    <span class="leds" aria-hidden="true">{% for key in bit_order reversed %}<i class="led{% if key in bit_keys %} on{% endif %}" data-bit="{{ key }}"></i>{% endfor %}</span>
+    <span class="register-count" aria-hidden="true"><span data-bit-count>{{ bit_count }}</span>/{{ bit_total }}</span>
+  </a>
+  <span class="status-uptime">up <span data-uptime="2002-09-03T00:00:00">24.1</span> years</span>
+  <button type="button" class="status-terminal" data-open-terminal aria-controls="terminal" aria-expanded="false"><span aria-hidden="true">&gt;_</span> <span class="status-label">Terminal</span></button>
+</aside>
 </body>
 </html>

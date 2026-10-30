@@ -1,56 +1,37 @@
-name: Deploy Django Application
+name: Deploy
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+
+concurrency: deploy
+
 jobs:
+  test:
+    uses: ./.github/workflows/django.yml
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy using SSH
-        uses: appleboy/ssh-action@master
+      - uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            set -euo pipefail
             cd /home/nicof/Foth.dev
 
-            # Pull latest changes
-            git pull origin main
+            git pull --ff-only origin main
 
-            # Create virtual environment if it doesn't exist
-            if [ ! -d "venv" ]; then
-                python3.13 -m venv venv
-            fi
+            [ -d venv ] || python3.13 -m venv venv
+            venv/bin/python -m pip install --upgrade pip
+            venv/bin/python -m pip install -r requirements.txt
 
-            # Activate virtual environment
-            . venv/bin/activate
+            venv/bin/python manage.py migrate --noinput
+            venv/bin/python manage.py collectstatic --noinput
 
-            # Install/update dependencies
-            pip3.13 install --upgrade pip
-            pip3.13 install -r requirements.txt
-
-            # Check migrations first
-            python3.13 manage.py migrate --check
-
-            # If check passes, run actual migrations
-            if [ $? -eq 0 ]; then
-                python manage.py migrate
-            else
-                echo "Migration check failed! Please review migrations."
-                exit 1
-            fi
-
-            # Collect static files
-            python3.13 manage.py collectstatic --noinput
-
-            # Deactivate virtual environment
-            deactivate
-
-            # Restart Gunicorn
             sudo systemctl restart gunicorn
-
-            # Reload Nginx
             sudo systemctl reload nginx

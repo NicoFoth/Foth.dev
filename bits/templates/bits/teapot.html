@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}418 I'm a teapot - Foth.dev{% endblock %}
+{% block content %}
+<article>
+  <header class="name">
+    <h1>418</h1>
+    <p>I'm a teapot</p>
+  </header>
+  <h2>Description</h2>
+  <p>The server refuses to brew coffee because it is, permanently, a teapot. See <a href="https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2">RFC 2324</a>, section 2.3.2.</p>
+<pre class="art" aria-hidden="true">
+<span class="dim">                )  (
+               (   ) )</span>
+                 ()
+             .--'  '--.
+      __    /          \   .-.
+      \ \__|            |-' /
+       \___|            |__/
+            \__________/
+<span class="dim">        ~~~~~~~~~~~~~~~~~~~~~~</span>
+</pre>
+  <p>Your request came back with HTTP status 418. You can check: <code>curl -I {{ request.build_absolute_uri }}</code></p>
+  <p>That is worth a bit, for asking politely.</p>
+</article>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block main_class %}column home{% endblock %}
+{% block content %}
+<div class="display">{{ panel }}</div>
+
+<header class="name">
+  <h1>Nico Foth</h1>
+  <p>software engineer, mostly Java, some infrastructure</p>
+</header>
+
+<h2>Synopsis</h2>
+<dl class="tp">
+  <dt><kbd>g</kbd> <kbd>1</kbd>&ndash;<kbd>7</kbd></dt><dd>switch window, as in the bar at the top</dd>
+  <dt><kbd>t</kbd> <kbd>1</kbd>&ndash;<kbd>4</kbd></dt><dd>switch colours: phosphor, amber, midnight, darkroom</dd>
+  <dt><kbd>:</kbd></dt><dd>open a shell; <a href="#terminal" data-open-terminal>or click here</a></dd>
+  <dt><kbd>?</kbd></dt><dd>list what the shell knows</dd>
+</dl>
+
+<h2>Description</h2>
+<p>I write software for a living, mostly Java, with some DevOps and infrastructure on the side.
+After work I build things from scratch, play video games, make music and watch movies.
+This site is one of the things I built. More in <a class="xref" href="{% url 'pages:about' %}">about(7)</a> and <a class="xref" href="{% url 'projects:index' %}">projects(1)</a>.</p>
+
+<h2 id="files">Files</h2>
+<dl class="tp files" aria-labelledby="files">
+  {% for page in pages %}
+  <dt><a href="{{ page.url }}">~{{ page.url }}</a></dt>
+  <dd>{{ page.text }}{% if page.visited %} <span class="seen" title="visited"><span aria-hidden="true">[seen]</span><span class="visually-hidden">(visited)</span></span>{% endif %}</dd>
+  {% endfor %}
+</dl>
+
+<h2>Bugs</h2>
+<p>One LED on the panel above is loose.</p>
+
+<h2>See also</h2>
+<p><span class="xref">curl(1)</span>, <a href="{% url 'pages:humans' %}">humans.txt</a>, <a href="https://github.com/NicoFoth" rel="me noopener">github.com/NicoFoth</a></p>
+{% endblock %}

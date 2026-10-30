@@ -1,28 +1,30 @@
-{% extends 'base_new.html' %}
+{% extends 'base.html' %}
+{% block title %}Teams - CS - Foth.dev{% endblock %}
 {% block content %}
-
-<table class="table table-bordered" style="background-color: rgb(79, 81, 87); color: black;">
-    <thead style="background-color: rgb(155, 153, 153);">
-        <tr>
-            <th scope="col">Team A</th>
-            <th scope="col">Team B</th>
-        </tr>
-    </thead>
-    <tbody style="font-size: 19px; color: rgb(221, 214, 214)">
-        <tr>
-            <td>
-                {% for player in team_a %}
-                {{ player}}
-                {% endfor %}
-            </td>
-            <td>
-                {% for player in team_b %}
-                {{ player }}
-                {% endfor %}
-            </td>
-        </tr>
-
+<header class="name">
+  <h1>teams</h1>
+  <p>two teams with roughly equal Elo</p>
+</header>
+<h2>Teams</h2>
+<div class="teams">
+  <div class="table-wrap">
+  <table>
+    <caption>Team A</caption>
+    <tbody>
+    {% for player in team_a %}<tr><td>{{ player }}</td></tr>
+    {% endfor %}
     </tbody>
-</table>
-
+  </table>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <caption>Team B</caption>
+    <tbody>
+    {% for player in team_b %}<tr><td>{{ player }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+<div class="actions"><a class="button" href="{% url 'cs:select_players' %}">Shuffle again</a> <a href="{% url 'cs:index' %}">Rankings</a></div>
 {% endblock content %}

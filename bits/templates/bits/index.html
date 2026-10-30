@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Bits - Foth.dev{% endblock %}
+{% block content %}
+<header class="name">
+  <h1>bits</h1>
+  <p>twelve hidden bits and the ones you have found</p>
+</header>
+
+<h2>Description</h2>
+<p>This site has a 12-bit register, and each bit is hidden somewhere. Find one and it is set, here and in the status line at the bottom of every page. Your progress is stored in a cookie in your browser, not on the server.</p>
+
+<h2>Register</h2>
+<div class="register-big" aria-hidden="true">
+  {% for i, bit, found in rows reversed %}<span class="cell"><i class="led{% if found %} on{% endif %}"></i><span>{{ i }}</span></span>{% endfor %}
+</div>
+<p class="register-value"><span class="hex">{{ hex }}</span> <span class="dim">0b {{ nibbles|join:" " }}</span> <span>{{ bit_count }} of {{ bit_total }} set{% if bit_count == bit_total %}. You found all of them.{% endif %}</span></p>
+
+<h2>Bits</h2>
+<ul class="bit-list">
+{% for i, bit, found in rows %}
+  <li{% if found %} class="found"{% endif %}>
+    <span class="bit-index">bit {{ i }}</span>
+    <i class="led{% if found %} on{% endif %}" aria-hidden="true"></i>
+    {% if found %}<span class="bit-title">{{ bit.title }}</span> <span class="visually-hidden">(set)</span>{% else %}<span class="hint">{{ bit.hint }}</span> <span class="visually-hidden">(not set yet)</span>{% endif %}
+  </li>
+{% endfor %}
+</ul>
+{% if bit_count < bit_total %}
+<p class="dim">Stuck? The terminal (press <kbd>:</kbd>) knows a few things. So does the page source.</p>
+{% endif %}
+{% endblock %}

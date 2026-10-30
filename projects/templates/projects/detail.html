@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ project.title }} - Foth.dev{% endblock %}
+{% block description %}{{ project.short_description|default:project.description|truncatewords:30 }}{% endblock %}
+{% block content %}
+<article>
+  <header class="name">
+    <h1>{{ project.title }}</h1>
+    {% if project.short_description and project.description %}<p>{{ project.short_description }}</p>{% endif %}
+  </header>
+  <h2>Description</h2>
+  {% if project.image %}<img class="figure" src="{{ project.image.url }}" alt="Screenshot of {{ project.title }}">{% endif %}
+  {{ project.description|default:project.short_description|default:"No description yet."|linebreaks }}
+  <h2>See also</h2>
+  <p class="links">{% if project.github_link %}<a href="{{ project.github_link }}">Source on GitHub</a>{% endif %}{% if project.demo_link %}<a href="{{ project.demo_link }}">Try it</a>{% endif %}<a href="{% url 'projects:index' %}">All projects</a></p>
+</article>
+{% endblock %}

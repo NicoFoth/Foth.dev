@@ -1,18 +1,21 @@
-{% extends "base_new.html" %}
+{% extends "base.html" %}
+{% block title %}Team generator - CS - Foth.dev{% endblock %}
 {% block content %}
-<form method="POST">
-    {% csrf_token %}
-
-    {% for field in selectform %}
-    {% for player in field %}
-
-        {{ player }}
-
-            
+<header class="name">
+  <h1>teams</h1>
+  <p>split players into two even teams</p>
+</header>
+<h2>Description</h2>
+<p>Pick at least four players. The generator splits them into two teams with roughly equal Elo.</p>
+<h2>Players</h2>
+<form method="post">
+  {% csrf_token %}
+  <fieldset class="checks">
+    <legend class="visually-hidden">Players</legend>
+    {% for choice in selectform.players %}<label for="{{ choice.id_for_label }}">{{ choice.tag }}<span>{{ choice.choice_label }}</span></label>
     {% endfor %}
-    {% endfor %}
-
-    <br>
-    <input type="submit" class="btn btn-success" value="Generieren">
+  </fieldset>
+  {% for error in selectform.players.errors %}<p class="form-error" role="alert">{{ error }}</p>{% endfor %}
+  <div class="actions"><button type="submit">Make teams</button> <a href="{% url 'cs:index' %}">Back to the rankings</a></div>
 </form>
 {% endblock content %}

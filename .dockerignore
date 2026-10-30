@@ -1,0 +1,7 @@
+# .git stays in: the footer reads the build hash from it.
+.github/
+**/__pycache__/
+venv/
+staticfiles/
+logs/
+nohup.out

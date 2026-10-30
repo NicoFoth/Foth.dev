@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}404 Not Found - Foth.dev{% endblock %}
+{% block content %}
+<header class="name">
+  <h1>ENOENT</h1>
+  <p>No such file or directory</p>
+</header>
+<h2>Description</h2>
+<pre class="shell"><span class="prompt">$ </span>cd {{ request.path|truncatechars:40 }}
+<span class="err">cd: {{ request.path|truncatechars:40 }}: No such file or directory</span></pre>
+<p>There is nothing at this address. Getting lost sets one of the hidden <a href="{% url 'bits:index' %}">bits</a>, though.</p>
+<div class="actions">
+  <a class="button" href="{% url 'pages:home' %}">Back to the front page</a>
+  <a href="#terminal" data-open-terminal>Open the terminal and <code>ls</code> around</a>
+</div>
+{% endblock %}

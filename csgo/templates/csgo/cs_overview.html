@@ -1,60 +1,31 @@
 {% extends 'base.html' %}
-{% load static %}
-
-
+{% load csgo_extras %}
+{% block title %}CS rankings - Foth.dev{% endblock %}
 {% block content %}
-<h1 class="text-3xl text-green-500">CS Rankings</h1>
-{% for season, players in seasons.items %}
-<div class="w-fit border-2 border-green-700 p-2 text-green-700 text-center my-5 overflow-auto">
-  <h2 class="text-2xl text-green-700 text-center"><a href="{% url 'cs_season_overview' season_id=season.id %}">{{ season }}</a></h2>
-  <p class="text-center">{{ season.startDate }} - {{ season.endDate }}</p>
-  <table class="text-center mx-auto">
-    <thead>
-      <tr>
-        <th class="px-2">{Position}</th>
-        <th class="px-2">{Name}</th>
-        <th class="px-2">{Balance}</th>
-        <th class="px-2">{Rank}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for player in players %}
-      {% if forloop.counter == 1 %}
-      <tr class="text-yellow-300 text-shadow-aoc shadow-yellow-300">
-      {% elif forloop.counter == 2 %}
-      <tr class="text-zinc-300 text-shadow-aoc shadow-zinc-300">
-      {% elif forloop.counter == 3 %}
-      <tr class="text-yellow-700 text-shadow-aoc shadow-yellow-700">
-      {% else %}
-      <tr>
-      {% endif %}
-        <td class="px-2">{{ forloop.counter }}</td>
-        <td class="px-2"><a href="{% url 'cs_player_profile' player_id=player.0.id %}">{{ player.0.name }}</a></td>
-        <td class="px-2">{{ player.1 }}</td>
-        {% if forloop.first %}
-        <td class="px-2">
-          <img src="{% static 'csgo/niko.png' %}" class="w-24">
-        </td>
-        {% elif forloop.last %}
-        <td class="px-2"><img src="{% static 'csgo/schublade.png' %}" class="w-24"></td>
-        {% elif player.1 > 1625 %}
-        <td class="px-2"><img src="{% static 'csgo/omega.png' %}" class="w-24"></td>
-        {% elif player.1 > 1575 %}
-        <td class="px-2"><img src="{% static 'csgo/alpha.png' %}" class="w-24"></td>
-        {% elif player.1 > 1525 %}
-        <td class="px-2"><img src="{% static 'csgo/beta.png' %}" class="w-24"></td>
-        {% elif player.1 > 1450 %}
-        <td class="px-2"><img src="{% static 'csgo/gamma.png' %}" class="w-24"></td>
-        {% elif player.1 > 1350 %}
-        <td class="px-2"><img src="{% static 'csgo/beep_boop.png' %}" class="w-24"></td>
-        {% elif player.1 > 1200 %}
-        <td class="px-2"><img src="{% static 'csgo/bots.png' %}" class="w-24"></td>
-        {% endif %}
-      </tr>
-
-      {% endfor %}
-    </tbody>
-  </table>
+<header class="name">
+  <h1>cs</h1>
+  <p>archived Elo ladder from our Counter-Strike evenings</p>
+</header>
+<h2>Description</h2>
+<p class="note">This is an archive. No new matches are recorded.</p>
+<p>You need ten matches in a season to be ranked. Open a season for its matches, or a player for their stats.</p>
+<div class="actions"><a class="button" href="{% url 'cs:select_players' %}">Generate balanced teams</a></div>
+<h2>Seasons</h2>
+{% for season, elos in seasons.items %}
+<div class="table-wrap">
+<table>
+  <caption><a href="{% url 'cs:season' season_id=season.id %}">{{ season.name }}</a> <span class="dim">{{ season.startDate|date:"Y-m-d" }} to {{ season.endDate|date:"Y-m-d" }}</span></caption>
+  <thead><tr><th class="rank" scope="col">#</th><th scope="col">Player</th><th class="num" scope="col">Elo</th></tr></thead>
+  <tbody>
+  {% for row in elos %}
+    <tr{% if forloop.first %} class="first"{% endif %}><td class="rank">{{ forloop.counter }}</td><td><a href="{% url 'cs:player' player_id=row.player.id %}">{{ row.player.name }}</a>{% rank_badge row.elo forloop.first forloop.last %}</td><td class="num">{{ row.elo }}</td></tr>
+  {% empty %}
+    <tr><td colspan="3" class="dim">No players yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
 </div>
+{% empty %}
+<p class="dim">No seasons yet.</p>
 {% endfor %}
 {% endblock %}

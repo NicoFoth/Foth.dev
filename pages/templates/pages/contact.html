@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Contact - Foth.dev{% endblock %}
+{% block content %}
+<header class="name">
+  <h1>contact</h1>
+  <p>leave me a message</p>
+</header>
+<h2>Description</h2>
+<p>Found a bug, have a neater solution to the brain teaser, or want to talk about a project? Leave a message. It lands in a database table that I actually read.</p>
+<h2>Usage</h2>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% for error in form.non_field_errors %}<p class="form-error" role="alert">{{ error }}</p>{% endfor %}
+  {% for field in form %}{% if field.name == 'website' %}
+  <div class="hp" aria-hidden="true">{{ field.label_tag }} <input type="text" name="{{ field.html_name }}" id="{{ field.id_for_label }}" tabindex="-1" autocomplete="off"></div>
+  {% else %}
+  <div class="field">
+    {{ field.label_tag }}
+    {{ field }}
+    {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+  </div>
+  {% endif %}{% endfor %}
+  <div class="actions"><button type="submit">Send message</button></div>
+</form>
+{% endblock %}

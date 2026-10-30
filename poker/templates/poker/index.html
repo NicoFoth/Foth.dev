@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Poker - Foth.dev{% endblock %}
+{% block content %}
+<header class="name">
+  <h1>poker</h1>
+  <p>chip counts from our home games</p>
+</header>
+<h2>Description</h2>
+<p>Chip balance across our home games, per season. Bragging rights only; no real money changes hands. Probably.</p>
+<h2>Seasons</h2>
+{% for season, players in seasons_data.items %}
+<div class="table-wrap">
+<table>
+  <caption>{{ season.name }} <span class="dim">{{ season.start_date|date:"Y-m-d" }} to {{ season.end_date|date:"Y-m-d" }}</span></caption>
+  <thead><tr><th class="rank" scope="col">#</th><th scope="col">Player</th><th class="num" scope="col">Chips</th></tr></thead>
+  <tbody>
+  {% for player in players %}
+    <tr{% if forloop.first %} class="first"{% endif %}><td class="rank">{{ forloop.counter }}</td><td>{{ player.name }}</td><td class="num">{{ player.balance }}</td></tr>
+  {% empty %}
+    <tr><td colspan="3" class="dim">No games yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% empty %}
+<p class="dim">No seasons yet.</p>
+{% endfor %}
+{% endblock %}

@@ -2,6 +2,9 @@ from django.urls import path
 
 from . import views
 
-urlpatterns =[
-    path('', views.show_projects, name="show_projects")
+app_name = 'projects'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('<int:pk>/', views.detail, name='detail'),
 ]

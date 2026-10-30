@@ -1,0 +1,663 @@
+/* foth.dev, read like a man page in a terminal.
+   One font at one size on a character grid. No cards, no rounded corners,
+   no soft shadows: the only things that glow are things that are lit,
+   the LEDs, set bits and the ASCII art. Colours are named for their job:
+   --lit is lit, --link is everything you can press, --here marks where you
+   are. Hover, focus and the current window are drawn in reverse video, the
+   way a terminal draws them. Four colour schemes share those names; t then
+   1-4 switches between them (site.js), darkroom is the default. */
+
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2'); }
+
+:root {
+  /* darkroom: a red safelight */
+  --bg: #120C0C;
+  --bar: #261818;    /* the tmux bar at the top and the status line at the bottom */
+  --inset: #0C0808;
+  --rule: #3A2424;
+  --edge: #7A5654;   /* outlines of fields and unlit LEDs, 3:1 on --bg */
+  --led-off: #2A1A1A;
+  --text: #EADCD8;
+  --dim: #B0948F;
+  --lit: #FF5A47;
+  --link: #F2C078;
+  --here: #FF8FB8;
+  --error: #FF7A6B;
+
+  /* the glows follow whatever is lit */
+  --lit-glow: color-mix(in srgb, var(--lit) 55%, transparent);
+  --led-glow: color-mix(in srgb, var(--lit) 85%, transparent);
+  --lit-hot: color-mix(in srgb, var(--lit), white 60%);
+
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --line: 1.5rem;    /* one line of text; every vertical gap is a whole number of these */
+  --status-h: 3rem;
+  --measure: 80ch;
+  --indent: 7ch;     /* how far man page text sits in from its section headings */
+  --gutter: 2ch;
+
+  color-scheme: dark;
+  scrollbar-color: var(--edge) var(--bg);
+}
+
+/* ---------------------------------------------------------- colour schemes */
+
+/* Set on <html> by the inline script in base.html, before the first paint. */
+html[data-theme="phosphor"] {
+  --bg: #08110B; --bar: #13261A; --inset: #050C07; --rule: #1D3B27; --edge: #447A56; --led-off: #12281A;
+  --text: #CFEBD5; --dim: #86AD92; --lit: #6CFF8E; --link: #E6E07A; --here: #FF8FD1; --error: #FF6B6B;
+}
+html[data-theme="amber"] {
+  --bg: #140E07; --bar: #2B1D0D; --inset: #0E0904; --rule: #3A2914; --edge: #7D6237; --led-off: #2A1D0E;
+  --text: #F1DFC0; --dim: #B8996A; --lit: #FFB000; --link: #FFD98A; --here: #FF7A45; --error: #FF5C5C;
+}
+html[data-theme="midnight"] {
+  --bg: #0B1020; --bar: #182039; --inset: #070B17; --rule: #252F50; --edge: #55608A; --led-off: #1A2140;
+  --text: #DCE3F2; --dim: #939FC0; --lit: #FFCB6B; --link: #82AAFF; --here: #FF7EC8; --error: #FF6E6E;
+}
+
+/* ------------------------------------------------------------------ base */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding-bottom: calc(var(--status-h) + env(safe-area-inset-bottom));
+  background: var(--bg);
+  color: var(--text);
+  font: 400 1rem/var(--line) var(--mono);
+  overflow-wrap: break-word;
+}
+
+::selection { background: var(--lit); color: var(--bg); }
+
+/* a terminal has one size: headings are bold, nothing more */
+h1, h2, h3, h4 { margin: var(--line) 0 0; font-size: 1em; line-height: inherit; font-weight: 600; }
+h1 { margin-top: 0; color: var(--lit); }
+
+p, ul, ol, dl, pre, table { margin: 0 0 var(--line); }
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+a:hover { background: var(--link); color: var(--bg); text-decoration: none; }
+
+:focus-visible { outline: 2px solid var(--lit); outline-offset: 2px; }
+
+strong, b { font-weight: 600; }
+sup { line-height: 0; }
+abbr[title] { text-decoration: none; cursor: help; }
+
+img { max-width: 100%; height: auto; }
+
+/* everything is monospace already, so literal text is bold, as in man pages */
+code, kbd, samp, pre { font: inherit; }
+code, kbd { font-weight: 600; }
+pre { overflow-x: auto; }
+pre code { font-weight: 400; }
+pre.code { padding-left: 4ch; }
+.kw { color: var(--lit); }
+.fn { font-weight: 600; }
+
+hr { border: 0; border-top: 1px dashed var(--edge); margin: var(--line) 0; }
+
+.dim { color: var(--dim); }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute; left: 1ch; top: -5rem; z-index: 60;
+  padding: .75rem 1ch;
+  background: var(--lit);
+  color: var(--bg);
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus { top: 1ch; }
+
+/* ------------------------------------------------------------------ tmux */
+
+/* The top bar is a tmux status line: session name, numbered windows, the
+   current one marked with a *, and a clock on the right. g then a number
+   switches window (site.js). */
+.tmux {
+  display: flex;
+  align-items: center;
+  gap: 0 2ch;
+  padding: 0 max(1ch, env(safe-area-inset-right)) 0 max(1ch, env(safe-area-inset-left));
+  background: var(--bar);
+}
+.tmux a { color: var(--text); text-decoration: none; }
+.tmux a:hover { background: var(--text); color: var(--bar); }
+
+.tmux .tmux-session {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--lit);
+  font-weight: 600;
+}
+.tmux .tmux-session:hover { background: var(--lit); color: var(--bg); }
+
+.windows ul { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.windows a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0 0 1ch;
+  white-space: nowrap;
+}
+.windows a::after { content: ' '; white-space: pre; }
+.win-n { color: var(--dim); }
+.windows a:hover .win-n { color: inherit; }
+.windows a[aria-current="page"] { background: var(--here); color: var(--bg); }
+.windows a[aria-current="page"] .win-n { color: inherit; }
+.windows a[aria-current="page"]::after { content: '*' / ''; }
+
+.tmux-right { display: flex; align-items: center; gap: 2ch; margin-left: auto; color: var(--dim); white-space: nowrap; }
+.tmux-right a { display: flex; align-items: center; min-height: 44px; }
+.tmux-right a::after { content: ' \2197' / ''; white-space: pre; }
+
+/* -------------------------------------------------------------- man page */
+
+.column {
+  display: block;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: var(--line) var(--gutter);
+}
+
+.man-head, .man-foot { display: flex; justify-content: space-between; gap: 2ch; }
+.man-head { margin-bottom: var(--line); }
+
+/* Everything is indented except the section headings, which sit at the margin. */
+.column > :not(article, h1, h2, .man-head, .name, .display),
+.column > article > :not(h1, h2, .name) { margin-left: var(--indent); }
+
+.column > h2, .column > article > h2, .name::before {
+  display: block;
+  margin: var(--line) 0 0;
+  color: var(--text);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* NAME: the page title, a dash and what the page is, like "ls - list directory contents" */
+.name { margin: 0; padding-left: var(--indent); }
+.name::before { content: 'Name' / ''; margin-left: calc(-1 * var(--indent)); }
+.name h1, .name p { display: inline; margin: 0; }
+.name p::before { content: '- ' / ''; white-space: pre; }
+.home .name p::after {
+  content: '\2588' / '';
+  margin-left: 1ch;
+  animation: blink 1.06s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* a tagged list, the .TP of man pages: a term at the left, its text next to it */
+.tp { display: grid; grid-template-columns: max-content 1fr; gap: 0 3ch; }
+.tp dt { font-weight: 600; white-space: nowrap; }
+.tp dd { margin: 0; }
+.tp dd p { margin: 0; }
+.tp-stacked { grid-template-columns: 1fr; }
+.tp-stacked dt { margin-top: var(--line); white-space: normal; }
+.tp-stacked dt:first-child { margin-top: 0; }
+.tp-stacked dd { padding-left: 4ch; }
+.seen { color: var(--dim); }
+
+.xref { white-space: nowrap; }
+
+.footer {
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter) var(--line);
+}
+.footer a[aria-current="page"] { color: var(--here); }
+.footer-small { margin: var(--line) 0 0; color: var(--dim); }
+/* the last line less(1) shows at the bottom of a man page */
+.footer::after {
+  content: '(END)' / '';
+  display: inline-block;
+  margin-top: var(--line);
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* ----------------------------------------------------------- status line */
+
+.status {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 2ch;
+  height: calc(var(--status-h) + env(safe-area-inset-bottom));
+  padding: 0 max(1ch, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(1ch, env(safe-area-inset-left));
+  background: var(--bar);
+  color: var(--dim);
+}
+.status-path { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+
+.register {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  min-height: 44px;
+  color: var(--dim);
+  text-decoration: none;
+}
+.register:hover { background: none; color: var(--dim); }
+.register:hover .register-count { background: var(--link); color: var(--bg); }
+
+/* LEDs are square cells on the grid. Unlit ones are dark holes; lit ones glow. */
+.leds { display: flex; gap: 3px; }
+.led {
+  display: block;
+  width: .6em;
+  height: .6em;
+  border: 1px solid var(--edge);
+  background: var(--bg);
+}
+.leds .led:nth-child(4n):not(:last-child) { margin-right: 4px; }  /* nibbles */
+.led.on {
+  border-color: var(--lit);
+  background: var(--lit);
+  box-shadow: 0 0 6px var(--lit-glow);
+}
+.led.just-on { animation: led-set 1.1s ease-out; }
+@keyframes led-set {
+  0%   { transform: scale(1.9); box-shadow: 0 0 16px var(--lit), 0 0 4px #fff; }
+  100% { transform: scale(1); }
+}
+
+.status-uptime { white-space: nowrap; }
+
+/* buttons are bracketed, like [ OK ] in a curses dialog */
+.status-terminal {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font: inherit;
+  cursor: pointer;
+}
+.status-label { margin-left: 1ch; }
+.status-terminal::before { content: '[' / ''; }
+.status-terminal::after { content: ']' / ''; }
+.status-terminal:hover, .status-terminal[aria-expanded="true"] { background: var(--link); color: var(--bg); }
+
+/* ---------------------------------------------------------------- notices */
+
+/* messages read like a program's output: a tag, a colon, the message */
+.notice::before { content: 'ok: ' / ''; color: var(--link); font-weight: 600; }
+.notice-info::before { content: 'note: ' / ''; }
+.notice-error::before, .notice-warning::before { content: 'error: ' / ''; color: var(--error); }
+
+.toasts {
+  position: fixed;
+  right: 2ch;
+  bottom: calc(var(--status-h) + env(safe-area-inset-bottom) + var(--line));
+  z-index: 30;
+  display: grid;
+  gap: 1ch;
+  width: min(44ch, calc(100vw - 4ch));
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  margin: 0;
+  padding: calc(var(--line) / 2) 2ch;
+  border: 1px solid var(--lit);
+  background: var(--bg);
+  animation: toast-in .2s steps(2), toast-out .2s steps(2) 5s forwards;
+}
+.toast::before {
+  content: '';
+  flex: none;
+  width: .6em;
+  height: .6em;
+  background: var(--lit);
+  box-shadow: 0 0 6px var(--lit-glow);
+}
+@keyframes toast-in { from { opacity: 0; } }
+@keyframes toast-out { to { opacity: 0; visibility: hidden; } }
+
+/* --------------------------------------------------------------- terminal */
+
+.terminal {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--status-h) + env(safe-area-inset-bottom) + 1ch);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  width: min(84ch, calc(100vw - 2ch));
+  height: min(26rem, calc(100vh - var(--status-h) - 6rem));
+  height: min(26rem, calc(100dvh - var(--status-h) - 6rem));
+  transform: translateX(-50%);
+  border: 1px solid var(--edge);
+  background: var(--bg);
+}
+.terminal[hidden] { display: none; }
+.terminal:focus-within { border-color: var(--lit); }
+
+/* the title bar is a tmux pane border */
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1ch;
+  background: var(--bar);
+  color: var(--text);
+}
+.terminal-close {
+  min-width: 44px;
+  min-height: 40px;
+  padding: 0 1ch;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font: inherit;
+  cursor: pointer;
+}
+.terminal-close::before { content: '[' / ''; }
+.terminal-close::after { content: ']' / ''; }
+.terminal-close:hover { background: var(--link); color: var(--bg); }
+
+.terminal-out { flex: 1; overflow-y: auto; padding: calc(var(--line) / 2) 1ch; white-space: pre-wrap; }
+.terminal-line { display: flex; align-items: center; gap: 1ch; padding: 0 1ch .25rem; }
+.terminal-prompt { flex: none; margin: 0; color: var(--lit); font-weight: 400; }
+.terminal .terminal-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  caret-color: var(--lit);
+}
+.terminal .terminal-input:focus-visible { outline: none; box-shadow: none; }
+
+.t-cmd { color: var(--dim); }
+.t-ok { color: var(--link); }
+.t-err { color: var(--error); }
+.t-bit { color: var(--lit); text-shadow: 0 0 8px var(--lit-glow); }
+
+/* ------------------------------------------------------------------ forms */
+
+label { display: block; font-weight: 600; }
+
+input:not([type]), input[type="text"], input[type="email"], input[type="password"], input[type="url"], textarea, select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 1ch;
+  border: 1px solid var(--edge);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  caret-color: var(--lit);
+}
+textarea { min-height: calc(8 * var(--line)); padding: .5rem 1ch; resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; border-color: var(--lit); box-shadow: inset 0 0 0 1px var(--lit); }
+input[aria-invalid="true"] { border-color: var(--error); }
+
+/* checkboxes are LEDs too: a dark cell, lit when checked */
+input[type="checkbox"] {
+  flex: none;
+  width: .75em;
+  height: .75em;
+  margin: 0;
+  border: 1px solid var(--edge);
+  background: var(--bg);
+  appearance: none;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked { border-color: var(--lit); background: var(--lit); box-shadow: 0 0 6px var(--lit-glow); }
+input[type="checkbox"]:focus-visible { outline: 2px solid var(--lit); outline-offset: 2px; }
+
+.button, button[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: pre;
+  cursor: pointer;
+}
+.button::before, button[type="submit"]::before { content: '[ ' / ''; }
+.button::after, button[type="submit"]::after { content: ' ]' / ''; }
+.button:hover, button[type="submit"]:hover { background: var(--link); color: var(--bg); }
+
+.field { margin-bottom: var(--line); }
+.field-error, .form-error { display: block; color: var(--error); }
+.form-error { margin: 0 0 var(--line); color: var(--text); }
+.form-error::before { content: 'error: ' / ''; color: var(--error); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0 3ch; margin-bottom: var(--line); }
+
+/* the honeypot field on the contact form, for bots only */
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ------------------------------------------------------------------- home */
+
+.display {
+  padding: clamp(.6rem, 2.5vw, 1.4rem);
+  border: 1px solid var(--rule);
+  background: var(--inset);
+}
+.panel { display: block; width: 100%; height: auto; overflow: visible; }
+.panel circle { fill: var(--led-off); }
+.panel .on {
+  fill: var(--lit);
+  filter: drop-shadow(0 0 2.5px var(--led-glow));
+  animation: power-on .3s ease-out both;
+  animation-delay: calc(var(--d) * 21ms);
+}
+@keyframes power-on {
+  0%   { fill: var(--led-off); filter: none; }
+  45%  { fill: var(--lit-hot); }
+  100% { fill: var(--lit); }
+}
+
+.loose { cursor: pointer; outline: none; }
+.loose .hit { fill: transparent; }
+.loose .led { fill: var(--lit); animation: flicker 3.4s steps(1) infinite; }
+.loose:focus-visible .hit { fill: none; stroke: var(--lit); stroke-width: .8; }
+.loose.fixed { cursor: default; }
+.loose.fixed .led { animation: none; filter: drop-shadow(0 0 2.5px var(--led-glow)); }
+.loose.jolt .led { animation: jolt .35s steps(2) 2; }
+@keyframes flicker {
+  0%, 100% { opacity: .18; }
+  6%  { opacity: 1; }
+  8%  { opacity: .25; }
+  11% { opacity: .9; }
+  14% { opacity: .18; }
+  57% { opacity: .7; }
+  59% { opacity: .18; }
+}
+@keyframes jolt { 50% { opacity: 1; } 100% { opacity: .2; } }
+
+/* ----------------------------------------------------------------- tables */
+
+/* tables are column(1) output: a header row, columns of text, no boxes */
+.table-wrap { margin-bottom: var(--line); overflow-x: auto; }
+table { margin: 0; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+caption { text-align: left; font-weight: 600; white-space: nowrap; }
+caption .dim { margin-left: 2ch; font-weight: 400; }
+th, td { padding: 0 3ch 0 0; text-align: left; white-space: nowrap; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th { color: var(--dim); font-weight: 400; text-transform: uppercase; }
+.num { text-align: right; }
+.rank { min-width: 3ch; color: var(--dim); }
+tr.first .rank { color: var(--lit); }
+tr.group th { padding-top: var(--line); color: var(--text); font-weight: 600; }
+.win { color: var(--lit); font-weight: 600; }
+.loss { color: var(--dim); }
+.rank-badge { height: 1.25em; margin-left: 1ch; vertical-align: -.25em; }
+
+.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4ch; }
+
+.checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr)); gap: 0 2ch; margin: 0; padding: 0; border: 0; }
+.checks label {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  min-height: 44px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.checks label:has(input:checked) { color: var(--lit); }
+
+/* ------------------------------------------------------------------ prose */
+
+.note { color: var(--dim); }
+
+.links { display: flex; flex-wrap: wrap; gap: 0 3ch; }
+
+.figure { border: 1px solid var(--rule); }
+
+.art { color: var(--lit); line-height: 1.25; text-shadow: 0 0 8px var(--lit-glow); }
+.art .dim { color: var(--dim); text-shadow: none; }
+.art .say { color: var(--text); text-shadow: none; }
+
+/* the path comes from the URL and can be any length, so wrap it instead of scrolling */
+.shell { white-space: pre-wrap; overflow-wrap: anywhere; }
+.shell .prompt { color: var(--dim); user-select: none; }
+.shell .err { color: var(--error); }
+
+.legal h1 { margin-bottom: var(--line); }
+
+/* ----------------------------------------------------------------- teaser */
+
+/* exercises hang their label in the margin, as an enumerated list does in a man page */
+.tasks { margin: 0 0 var(--line); padding: 0; list-style: none; }
+.task { margin-bottom: var(--line); padding-left: 4ch; }
+.task h2 { margin: 0 0 var(--line); }
+.task-label { display: inline-block; width: 4ch; margin-left: -4ch; color: var(--dim); }
+.task.is-solved .task-label { color: var(--lit); }
+.task p:last-child { margin-bottom: 0; }
+.solved strong { color: var(--lit); text-shadow: 0 0 8px var(--lit-glow); }
+
+.answer label { font-weight: 400; color: var(--dim); }
+.answer-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0 2ch; }
+.answer-row input { flex: 1 1 16ch; width: auto; }
+.feedback { margin: 0; }
+.feedback::before { content: '! ' / ''; color: var(--error); font-weight: 600; }
+.answer-help { margin: 0; color: var(--dim); }
+
+.wrap-up { padding: calc(var(--line) / 2) 2ch; border: 1px solid var(--lit); }
+.wrap-up h2 { margin: 0 0 var(--line); color: var(--lit); }
+.wrap-up p:last-child { margin-bottom: 0; }
+
+/* ------------------------------------------------------------------- bits */
+
+.register-big { display: flex; margin: 0 0 var(--line); }
+.register-big .cell { display: grid; flex: 1; justify-items: center; gap: .25rem; color: var(--dim); }
+.register-big .cell:nth-child(4n):not(:last-child) { margin-right: clamp(.4rem, 2vw, 1.25rem); }
+.register-big .led { width: min(2rem, 100%); height: auto; aspect-ratio: 1; }
+.register-big .led.on { box-shadow: 0 0 12px var(--lit-glow); }
+
+.register-value { display: flex; flex-wrap: wrap; gap: 0 3ch; }
+.register-value .hex { color: var(--lit); font-weight: 600; text-shadow: 0 0 8px var(--lit-glow); }
+
+.bit-list { margin: 0 0 var(--line); padding: 0; list-style: none; }
+.bit-list li { display: grid; grid-template-columns: 7ch 1ch 1fr; gap: 0 2ch; align-items: baseline; }
+.bit-index { color: var(--dim); }
+.bit-list .led { align-self: start; margin-top: calc((var(--line) - .6em) / 2); }
+.bit-title { font-weight: 600; }
+.bit-list .found .bit-index { color: var(--lit); }
+.bit-list .hint { color: var(--dim); }
+
+/* ------------------------------------------------------------- konami rain */
+
+.rain {
+  position: fixed;
+  top: -2rem;
+  z-index: 40;
+  color: var(--here);
+  font-weight: 600;
+  text-shadow: 0 0 8px var(--here);
+  pointer-events: none;
+  animation: fall linear forwards;
+}
+@keyframes fall { to { transform: translateY(110vh); opacity: .2; } }
+
+/* ---------------------------------------------------------- high contrast */
+
+/* neutral greys, so it works on top of every colour scheme */
+body.hc {
+  --text: #FFFFFF;
+  --dim: #D6D6D6;
+  --rule: #6E6E6E;
+  --edge: #A3A3A3;
+  --bar: #000000;
+}
+body.hc * { text-shadow: none !important; }
+
+/* ---------------------------------------------------------------- narrow */
+
+@media (max-width: 920px) {
+  /* the windows move to a line of their own and wrap, so none of them hide off screen */
+  .tmux { flex-wrap: wrap; }
+  .windows { order: 3; flex: 1 0 100%; margin: 0 -1ch; border-top: 1px solid var(--bg); }
+}
+
+@media (max-width: 640px) {
+  html { font-size: 93.75%; }
+  :root { --indent: 3ch; }
+  .status { gap: 1ch; }
+  .status-uptime { display: none; }
+  .status-label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .leds { gap: 2px; }
+  .leds .led:nth-child(4n):not(:last-child) { margin-right: 3px; }
+  .man-manual { display: none; }
+  .tmux-clock { display: none; }
+  .tp { grid-template-columns: 1fr; }
+  .tp dd { margin-bottom: calc(var(--line) / 2); padding-left: 3ch; }
+  .man-foot { flex-wrap: wrap; }
+  .teams { grid-template-columns: 1fr; }
+  .toasts { right: 1ch; width: calc(100vw - 2ch); }
+  .bit-list li { grid-template-columns: 6ch 1ch 1fr; gap: 0 1ch; }
+}
+
+/* ------------------------------------------------------------------ motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .panel .on { animation: none; }
+  .loose .led { animation: none; opacity: .45; }
+  .loose.fixed .led { opacity: 1; }
+  .rain { display: none; }
+}
