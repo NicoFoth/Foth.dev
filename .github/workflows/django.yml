@@ -23,4 +23,6 @@ jobs:
       - name: Migrations match the models
         run: python manage.py makemigrations --check --dry-run
       - run: python manage.py check
+      - name: Collect static files (templates need the manifest)
+        run: python manage.py collectstatic --noinput
       - run: python manage.py test

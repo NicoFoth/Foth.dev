@@ -14,6 +14,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      # The site runs as the `website` service of the shared compose project on the
+      # server, built from this checkout (the Dockerfile runs collectstatic).
       - uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.HOST }}
@@ -22,16 +24,26 @@ jobs:
           port: 22
           script: |
             set -euo pipefail
-            cd /home/nicof/Foth.dev
-
+            cd /home/website/Foth.dev
             git pull --ff-only origin main
+            docker compose -f /home/central-routing-compose.yaml up -d --build website
 
-            [ -d venv ] || python3.13 -m venv venv
-            venv/bin/python -m pip install --upgrade pip
-            venv/bin/python -m pip install -r requirements.txt
+      # From the runner, so it goes through DNS, TLS and nginx like a visitor would.
+      # Retries cover the few seconds gunicorn needs to come up after the rebuild. The
+      # User-Agent must not start with curl/, or / answers with the plain-text page.
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          curl_() { curl -sS -A 'foth.dev deploy smoke test' --retry 10 --retry-delay 3 --retry-all-errors "$@"; }
 
-            venv/bin/python manage.py migrate --noinput
-            venv/bin/python manage.py collectstatic --noinput
+          code=$(curl_ -o page.html -w '%{http_code}' https://foth.dev/)
+          echo "/ -> $code"
+          [ "$code" = 200 ]
 
-            sudo systemctl restart gunicorn
-            sudo systemctl reload nginx
+          [[ $(<page.html) =~ href=\"(/static/[^\"]+\.css)\" ]] || { echo "no stylesheet link on /"; exit 1; }
+          css=${BASH_REMATCH[1]}
+
+          out=$(curl_ -o /dev/null -w '%{http_code} %{content_type}' "https://foth.dev$css")
+          echo "$css -> $out"
+          read -r code type <<<"$out"
+          [ "$code" = 200 ] && [[ $type == text/css* ]]

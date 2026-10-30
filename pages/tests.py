@@ -22,6 +22,11 @@ class PageTests(TestCase):
         self.assertEqual(response['Content-Type'].split(';')[0], 'text/plain')
         self.assertContains(response, curl_code())
 
+    def test_curl_links_are_https_behind_the_proxy(self):
+        response = self.client.get('/', HTTP_USER_AGENT='curl/8.5.0', HTTP_HOST='foth.dev',
+                                   HTTP_X_FORWARDED_PROTO='https')
+        self.assertContains(response, 'https://foth.dev/about/')
+
     def test_robots_and_humans(self):
         self.assertContains(self.client.get(reverse('pages:robots')), 'Disallow: /admin/')
         self.assertContains(self.client.get(reverse('pages:humans')), 'Nico Foth')
