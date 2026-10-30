@@ -13,6 +13,22 @@
     set(key, value) { try { localStorage.setItem(key, value); } catch { /* private mode */ } },
   };
 
+  /* ---------------------------------------------------- colour schemes */
+
+  // t then 1-4. The colours live in site.css; base.html applies the saved one before the first paint.
+  const THEMES = ['phosphor', 'amber', 'midnight', 'darkroom'];
+  const DEFAULT_THEME = 'darkroom';
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const currentTheme = () => document.documentElement.dataset.theme || DEFAULT_THEME;
+
+  function setTheme(name) {
+    if (name === DEFAULT_THEME) delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = name;
+    store.set('theme', name === DEFAULT_THEME ? '' : name);
+    themeMeta?.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+  }
+  setTheme(currentTheme());
+
   /* -------------------------------------------------------------- bits */
 
   // Twelve bits make a register. The status line shows it as LEDs, bit 0 on the right.
@@ -208,12 +224,14 @@
         '  bits               show which bits are set',
         '  unlock <code>      redeem a code found elsewhere',
         '  whoami, pwd, date, uptime, echo, history, clear',
+        '  theme [name|1-4]   list or switch colour schemes',
         '  contrast           toggle high-contrast mode',
         '  exit               close the terminal (or press Esc)',
         '',
         'Keyboard: `:` opens this terminal, `?` shows this help,',
         '`g` then 1-7 switches window, as in the bar at the top;',
-        '`g` then h/a/p/t/b/c jumps to home/about/projects/teaser/bits/contact.',
+        '`g` then h/a/p/t/b/c jumps to home/about/projects/teaser/bits/contact;',
+        '`t` then 1-4 switches colours: phosphor, amber, midnight, darkroom.',
       ]);
     },
     ls(args) {
@@ -257,6 +275,17 @@
       const binary = value.toString(2).padStart(order.length, '0').replace(/(....)(?=.)/g, '$1 ');
       print(`0x${value.toString(16).toUpperCase().padStart(3, '0')}  ${binary}`, 't-bit');
       print(`${have.size} of ${order.length} bits set. Hints are on /bits/, \`cd bits\` goes there.`);
+    },
+    theme(args) {
+      const arg = (args[0] || '').toLowerCase();
+      const name = THEMES[Number(arg) - 1] || (THEMES.includes(arg) ? arg : null);
+      if (!arg) {
+        THEMES.forEach((theme, i) => print(`${theme === currentTheme() ? '*' : ' '} ${i + 1}  ${theme}`));
+        return print('Usage: theme <name|1-4>, or press t then 1-4.', 'dim');
+      }
+      if (!name) return print(`theme: ${args[0]}: no such colour scheme. Try \`theme\`.`, 't-err');
+      setTheme(name);
+      print(`colours: ${name}`, 't-ok');
     },
     contrast() {
       const on = body.classList.toggle('hc');
@@ -307,6 +336,7 @@
   COMMANDS.dir = COMMANDS.ls;
   COMMANDS.type = COMMANDS.cat;
   COMMANDS.cls = COMMANDS.clear;
+  COMMANDS.colors = COMMANDS.colours = COMMANDS.theme;
   COMMANDS.brew = COMMANDS.coffee;
   COMMANDS.vi = COMMANDS.nano = COMMANDS.emacs = COMMANDS.vim;
   COMMANDS.quit = COMMANDS.logout = COMMANDS.exit;
@@ -407,7 +437,14 @@
 
   /* ---------------------------------------------------------- keyboard */
 
-  let pendingG = false;
+  // g and t are prefix keys: they wait one second for the key that follows
+  let prefix = null;
+  let prefixTimer;
+  function armPrefix(key) {
+    prefix = key;
+    clearTimeout(prefixTimer);  // a stale timer from an earlier prefix must not cancel this one
+    prefixTimer = setTimeout(() => { prefix = null; }, 1000);
+  }
   const JUMPS = { h: '/', a: '/about/', p: '/projects/', t: '/teaser/', b: '/bits/', c: '/contact/' };
   // g then a window number, like tmux's prefix key: the order of the windows in the top bar
   document.querySelectorAll('.windows a').forEach((link, i) => { JUMPS[i + 1] = link.getAttribute('href'); });
@@ -418,13 +455,16 @@
     if (!typing) konami(event.key);
     if (typing || event.ctrlKey || event.metaKey || event.altKey) return;
 
-    if (pendingG) {
-      pendingG = false;
-      if (JUMPS[event.key]) { location.href = JUMPS[event.key]; return; }
+    const after = prefix;
+    prefix = null;
+    if (after === 'g' && JUMPS[event.key]) { location.href = JUMPS[event.key]; return; }
+    if (after === 't') {
+      const theme = THEMES[Number(event.key) - 1];
+      if (theme) { setTheme(theme); toast(`Colours: ${theme}. t then 1-4 switches.`); return; }
     }
     if (event.key === ':' || event.key === '`') { event.preventDefault(); openTerminal(); }
     else if (event.key === '?') { event.preventDefault(); openTerminal('help'); }
-    else if (event.key === 'g') { pendingG = true; setTimeout(() => { pendingG = false; }, 1000); }
+    else if (event.key === 'g' || event.key === 't') armPrefix(event.key);
   });
 
   /* ---------------------------------------------------------- contrast */
@@ -433,8 +473,10 @@
 
   /* ------------------------------------------------- for the curious */
 
+  const css = getComputedStyle(document.documentElement);
+  const lit = css.getPropertyValue('--lit').trim();
   console.log(
     '%c●%c  Hello, fellow developer.\n   There are ' + order.length + ' bits hidden on this site. Some of them are only reachable from here,\n   or from your own terminal. Press : for a shell.',
-    'color:#FFB23F;text-shadow:0 0 6px #FFB23F;font-size:16px', 'color:#4FD8EB',
+    `color:${lit};text-shadow:0 0 6px ${lit};font-size:16px`, `color:${css.getPropertyValue('--link').trim()}`,
   );
 })();

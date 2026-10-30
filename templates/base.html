@@ -4,13 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0C1A1D">
+<meta name="theme-color" content="#120C0C">
 <meta name="description" content="{% block description %}Nico Foth, software engineer. Projects, a brain teaser and other things built after hours.{% endblock %}">
 <meta name="csrf-token" content="{{ csrf_token }}">
 <title>{% block title %}Foth.dev{% endblock %}</title>
 <link rel="icon" href="{% static 'favicon.ico' %}">
 <link rel="preload" href="{% static 'fonts/ibm-plex-mono-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{% static 'fonts/ibm-plex-mono-latin-600-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+<script>/* the saved colour scheme, set before the first paint so the page does not flash */
+try { const t = localStorage.getItem('theme'); if (['phosphor', 'amber', 'midnight'].indexOf(t) > -1) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 <link rel="stylesheet" href="{% static 'css/site.css' %}?v={{ build_sha }}">
 <script src="{% static 'js/site.js' %}?v={{ build_sha }}" defer></script>
 </head><!--

@@ -68,7 +68,7 @@ def panel(request):
     )
     return format_html(
         '<svg class="panel" viewBox="0 0 {} {}" role="img" aria-labelledby="panel-title">'
-        '<title id="panel-title">NICO, spelled out in amber LEDs</title>{}{}</svg>',
+        '<title id="panel-title">NICO, spelled out in LEDs</title>{}{}</svg>',
         WIDTH * 10, HEIGHT * 10, mark_safe(''.join(leds)), loose,
     )
 
