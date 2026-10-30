@@ -21,6 +21,9 @@ ALLOWED_HOSTS = ['foth.dev', 'www.foth.dev', 'localhost', '127.0.0.1', '176.9.90
 # in the CSRF origin check.
 CSRF_TRUSTED_ORIGINS = ['https://foth.dev', 'https://www.foth.dev']
 
+# nginx sets X-Forwarded-Proto, so absolute URLs (the curl landing page) come out as https.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Every .dev domain is HTTPS-only (HSTS preload), so cookies never need to
 # travel over plain HTTP in production.
 SESSION_COOKIE_SECURE = not DEBUG
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'pages.middleware.RenderTimeMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,3 +108,11 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# gunicorn serves static files itself (WhiteNoise), from the hashed, compressed copies
+# collectstatic writes at image build. Rendering {% static %} with DEBUG off needs that
+# manifest, so run collectstatic before the tests.
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+}
