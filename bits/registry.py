@@ -35,6 +35,6 @@ CLIENT_CLAIMABLE = {'sudo', 'konami', 'flicker', 'owl'}
 
 # Visiting all of these (by view name) sets the "explorer" bit.
 MENU_PAGES = {
-    'pages:home', 'pages:about', 'pages:contact', 'pages:legal',
+    'pages:home', 'pages:about', 'pages:contact',
     'projects:index', 'teaser:sheet', 'bits:index', 'cs:index', 'poker:index',
 }
