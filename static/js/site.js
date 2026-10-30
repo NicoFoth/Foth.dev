@@ -1,4 +1,4 @@
-/* foth.dev -- no framework, no build step. Read along, it's short. */
+/* foth.dev, plain JavaScript without a framework or a build step. Read along, it's short. */
 (() => {
   'use strict';
 
@@ -178,7 +178,7 @@
     'readme.txt': () => [
       'foth.dev',
       '========',
-      'A personal site that pretends to be a terminal.',
+      "Nico Foth's personal website.",
       '',
       order.length + ' bits are hidden around here. `bits` shows your register.',
       'Pages are directories. `ls` lists them, `cd` goes there.',
@@ -476,7 +476,7 @@
   const css = getComputedStyle(document.documentElement);
   const lit = css.getPropertyValue('--lit').trim();
   console.log(
-    '%c●%c  Hello, fellow developer.\n   There are ' + order.length + ' bits hidden on this site. Some of them are only reachable from here,\n   or from your own terminal. Press : for a shell.',
+    '%c●%c  You found the console.\n   There are ' + order.length + ' bits hidden on this site. Some of them are only reachable from here,\n   or from your own terminal. Press : for a shell.',
     `color:${lit};text-shadow:0 0 6px ${lit};font-size:16px`, `color:${css.getPropertyValue('--link').trim()}`,
   );
 })();

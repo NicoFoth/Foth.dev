@@ -23,7 +23,7 @@ HEIGHT = 9
 LOOSE = (WIDTH - 1, 0)
 
 PAGES = [
-    ('About', 'pages:about', 'Background, in my own words.'),
+    ('About', 'pages:about', 'Who I am and what I work on.'),
     ('Projects', 'projects:index', 'Things I built after work.'),
     ('Brain teaser', 'teaser:sheet', 'A small exercise from a first-semester problem sheet.'),
     ('Bits', 'bits:index', 'Twelve hidden bits and the ones you have found.'),

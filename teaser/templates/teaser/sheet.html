@@ -41,7 +41,7 @@
   {% if solved.a and solved.b %}
   <section class="wrap-up">
     <h2>Both parts solved</h2>
-    <p>The function has a name: population count, or popcount. Most CPUs do it in a single instruction (<code>POPCNT</code> on x86), and it shows up wherever bits get counted, from Hamming distances to chess engines that store the board as bitmasks.</p>
+    <p>The function is called population count, or popcount. Most CPUs have a single instruction for it (<code>POPCNT</code> on x86). It is used for Hamming distances, for example, and in chess engines that store the board as bitmasks.</p>
     <p>There are more bits hidden around the site. <a href="{% url 'bits:index' %}">See which ones are left</a>.</p>
   </section>
   {% endif %}

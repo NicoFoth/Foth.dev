@@ -8,10 +8,11 @@ from django.db import migrations
 
 ROUNDUP = {
     'title': 'Roundup',
-    'short_description': 'An app for planning things with friends: invitations, carpools and a chat. In beta.',
+    'short_description': 'An app for planning things with friends: invitations, carpools and a chat. It\'s in beta.',
     'description': (
-        'A Flutter app for Android and iOS that organises events with friends: who is invited, '
-        'who drives whom, and a chat for everything else. The backend is Spring Boot on PostgreSQL.\n\n'
+        'A Flutter app for Android and iOS for organising events with friends. It keeps track of '
+        'who is invited and who drives whom, and has a chat for everything else. The backend is '
+        'Spring Boot on PostgreSQL.\n\n'
         'It started in 2021 as Meetup, on Firebase, and has been rebuilt since. Roundup is in beta '
         'and not in the app stores yet.'
     ),
@@ -22,13 +23,13 @@ ROUNDUP = {
 
 FOTH_DEV = {
     'title': 'foth.dev',
-    'short_description': 'This site: a personal website that pretends to be a terminal.',
+    'short_description': "The site you're reading, built to look like a terminal.",
     'description': (
         'Every page is laid out like a man page, with a tmux bar on top and a shell behind the : key. '
         'Twelve bits are hidden around the site, and the brain teaser sets two of them. '
         'It answers curl, too.\n\n'
-        'Django and SQLite on the server, one stylesheet and a little vanilla JavaScript in the '
-        'browser. No build step, no framework, no tracking.'
+        'The server runs Django with SQLite. The browser gets one stylesheet and a little vanilla '
+        'JavaScript, and there is no build step.'
     ),
     'github_link': 'https://github.com/NicoFoth/Foth.dev',
     'position': 2,

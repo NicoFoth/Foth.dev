@@ -27,10 +27,10 @@ try { const t = localStorage.getItem('theme'); if (['phosphor', 'amber', 'midnig
 
     Oh, hello there, fellow source reader.
 
-    No framework, no bundler, no tracking. Just Django, one stylesheet
-    and a bit of vanilla JS. Everything is set in IBM Plex Mono, one
-    size, like the terminal it pretends to be. The humans behind this
-    are listed in /humans.txt.
+    It's Django, one stylesheet and a bit of vanilla JS, without a
+    framework or a bundler. Everything is set in IBM Plex Mono at one
+    size, as in a terminal. The humans behind this are listed in
+    /humans.txt.
 
     Twelve bits are hidden on this site. /robots.txt is a good start.
 
@@ -68,7 +68,7 @@ try { const t = localStorage.getItem('theme'); if (['phosphor', 'amber', 'midnig
     <span>rendered in <!--render-ms--></span>
     <span aria-hidden="true">{{ man.title }}</span>
   </div>
-  <p class="footer-small">Django {{ versions.django }}, Python {{ versions.python }}, SQLite {{ versions.sqlite }}. No trackers, no analytics. <a href="{% url 'pages:legal' %}"{% if current == 'pages:legal' %} aria-current="page"{% endif %}>Legal</a>{% if user.is_authenticated %}. Signed in as {{ user.get_username }}{% endif %}</p>
+  <p class="footer-small">Django {{ versions.django }}, Python {{ versions.python }}, SQLite {{ versions.sqlite }}. <a href="{% url 'pages:legal' %}"{% if current == 'pages:legal' %} aria-current="page"{% endif %}>Legal</a>{% if user.is_authenticated %}. Signed in as {{ user.get_username }}{% endif %}</p>
 </footer>
 
 <div class="toasts" aria-live="polite">

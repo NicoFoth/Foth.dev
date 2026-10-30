@@ -7,13 +7,13 @@
 </header>
 
 <h2>Description</h2>
-<p>This site has a 12-bit register, and each bit is hidden somewhere. Find one and it is set, here and in the status line at the bottom of every page. Your progress lives in a cookie on your machine and nowhere else.</p>
+<p>This site has a 12-bit register, and each bit is hidden somewhere. Find one and it is set, here and in the status line at the bottom of every page. Your progress is stored in a cookie in your browser, not on the server.</p>
 
 <h2>Register</h2>
 <div class="register-big" aria-hidden="true">
   {% for i, bit, found in rows reversed %}<span class="cell"><i class="led{% if found %} on{% endif %}"></i><span>{{ i }}</span></span>{% endfor %}
 </div>
-<p class="register-value"><span class="hex">{{ hex }}</span> <span class="dim">0b {{ nibbles|join:" " }}</span> <span>{{ bit_count }} of {{ bit_total }} set{% if bit_count == bit_total %}. All of them. Respect.{% endif %}</span></p>
+<p class="register-value"><span class="hex">{{ hex }}</span> <span class="dim">0b {{ nibbles|join:" " }}</span> <span>{{ bit_count }} of {{ bit_total }} set{% if bit_count == bit_total %}. You found all of them.{% endif %}</span></p>
 
 <h2>Bits</h2>
 <ul class="bit-list">
